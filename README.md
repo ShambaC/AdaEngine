@@ -1,2 +1,2 @@
 # AdaEngine
- A game engine made in java with LWGL
+ A game engine made in java with LWGJL
