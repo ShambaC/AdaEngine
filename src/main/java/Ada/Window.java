@@ -19,8 +19,8 @@ public class Window {
     private  static  Window window = null;
 
     private  Window() {
-        this.width = 1920;
-        this.height = 1080;
+        this.width = 640;
+        this.height = 480;
         this.title = "AdaEngine";
 
         r = 1;
@@ -48,7 +48,7 @@ public class Window {
         glfwDestroyWindow(glfwWindow);
 
         // Terminate the GLFW and the free the error callback
-        glfwTerminate();loop();
+        glfwTerminate();
         glfwSetErrorCallback(null).free();
     }
 
@@ -80,6 +80,9 @@ public class Window {
 
         // Set up keylisteners
         glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
+
+        // Set up gamepad listener
+        glfwSetJoystickCallback(GamePadListener::GamePadCallback);
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow);
