@@ -36,9 +36,11 @@ public class Window {
         switch (newScene) {
             case 0:
                 currentScene = new LevelEditorScene();
+                currentScene.init();
                 break;
             case 1:
                 currentScene = new LevelScene();
+                currentScene.init();
                 break;
             default:
                 assert false : "Unknown scene '" + newScene + "'";
@@ -87,7 +89,7 @@ public class Window {
         // Create the window
         glfwWindow = glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
         if(glfwWindow == NULL) {
-            throw new IllegalStateException(("Failed to create GLFW WIndow"));
+            throw new IllegalStateException(("Failed to create GLFW Window"));
         }
 
         // Set up mouse callback event
