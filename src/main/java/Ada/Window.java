@@ -3,6 +3,7 @@ package Ada;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import util.Time;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -10,15 +11,17 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
-    private  int width, height;
-    private  String title;
+    private int width, height;
+    private String title;
     private long glfwWindow;
 
-    private  float r, g, b, a;
+    public float r, g, b, a;
 
-    private  static  Window window = null;
+    private static Window window = null;
 
-    private  Window() {
+   private static Scene currentScene;
+
+    private Window() {
         this.width = 640;
         this.height = 480;
         this.title = "AdaEngine";
@@ -29,7 +32,21 @@ public class Window {
         a = 1;
     }
 
-    public  static  Window get() {
+    public static void changeScene(int newScene) {
+        switch (newScene) {
+            case 0:
+                currentScene = new LevelEditorScene();
+                break;
+            case 1:
+                currentScene = new LevelScene();
+                break;
+            default:
+                assert false : "Unknown scene '" + newScene + "'";
+                break;
+        }
+    }
+
+    public static Window get() {
         if(Window.window == null) {
             Window.window = new Window();
         }
@@ -98,9 +115,15 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+
+        Window.changeScene(0);
     }
 
     public  void  loop() {
+        float beginTime = Time.getTime();
+        float endTime = Time.getTime();
+        float dt = -1.0f;
+
         while(!glfwWindowShouldClose(glfwWindow)) {
             // Poll events
             glfwPollEvents();
@@ -108,7 +131,15 @@ public class Window {
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            if(dt >= 0) {
+                currentScene.update(dt);
+            }
+
             glfwSwapBuffers(glfwWindow);
+
+            endTime = Time.getTime();
+            dt = endTime - beginTime;
+            beginTime = endTime;
         }
     }
 }
