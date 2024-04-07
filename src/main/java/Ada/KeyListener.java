@@ -18,15 +18,16 @@ public class KeyListener {
     }
 
     public static void keyCallback(long window, int key, int scanCode, int action, int mods) {
-        if (action == GLFW_PRESS) {
-            get().keyPressed[key] = true;
-        }
-        else if (action == GLFW_RELEASE) {
-            get().keyPressed[key] = false;
+        if(key < 350) {
+            if (action == GLFW_PRESS) {
+                get().keyPressed[key] = true;
+            } else if (action == GLFW_RELEASE) {
+                get().keyPressed[key] = false;
+            }
         }
     }
 
     public static boolean isKeyPressed(int keyCode) {
-        return  get().keyPressed[keyCode];
+        return keyCode < 350 && get().keyPressed[keyCode];
     }
 }
