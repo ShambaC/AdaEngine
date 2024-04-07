@@ -3,6 +3,7 @@ package Ada;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import renderer.Shader;
+import renderer.Texture;
 import util.Time;
 
 import java.awt.event.KeyEvent;
@@ -17,11 +18,11 @@ public class LevelEditorScene extends Scene {
 
 
     private float[] vertexArray = {
-             // position                 // color
-             100.5f,  0.5f,    0.0f,       1.0f, 0.0f, 0.0f, 1.0f, // bottom right 0
-             0.5f,    100.5f,  0.0f,       0.0f, 1.0f, 0.0f, 1.0f, // top left     1
-             100.5f,  100.5f,  0.0f,       0.0f, 0.0f, 1.0f, 1.0f, // top right    2
-             0.5f,    0.5f,    0.0f,       1.0f, 1.0f, 0.0f, 1.0f, // bottom left  3
+             // position                 // color                      // UV Coordinates
+             100.5f,  0.5f,    0.0f,       1.0f, 0.0f, 0.0f, 1.0f,     1, 1, // bottom right 0
+             0.5f,    100.5f,  0.0f,       0.0f, 1.0f, 0.0f, 1.0f,     0, 0, // top left     1
+             100.5f,  100.5f,  0.0f,       0.0f, 0.0f, 1.0f, 1.0f,     1, 0, // top right    2
+             0.5f,    0.5f,    0.0f,       1.0f, 1.0f, 0.0f, 1.0f,     0, 1, // bottom left  3
     };
 
     // This must be in counter-clockwise orders
@@ -33,15 +34,19 @@ public class LevelEditorScene extends Scene {
     private int vaoID, vboID, eboID;
 
     private Shader defaultShader;
+    private Texture testTexture;
 
     public  LevelEditorScene() {
-        defaultShader = new Shader("assets/shaders/default.glsl");
-        defaultShader.compile();
+
     }
 
     @Override
     public void init() {
         this.camera = new Camera(new Vector2f());
+        defaultShader = new Shader("assets/shaders/default.glsl");
+        defaultShader.compile();
+        this.testTexture = new Texture("assets/images/testImage.png");
+
          // Generate VBO, VAO, EBO buffer objects and send to GPU
         vaoID = glGenVertexArrays();
         glBindVertexArray(vaoID);
@@ -66,21 +71,27 @@ public class LevelEditorScene extends Scene {
         // Add the vertex attribute pointers
         int positionsSize = 3;
         int colorSize = 4;
-        int floatSizeBytes = 4;
-        int vertexSizeBytes = (positionsSize + colorSize) * floatSizeBytes;
+        int uvSize = 2;
+        int vertexSizeBytes = (positionsSize + colorSize + uvSize) * Float.BYTES;
         glVertexAttribPointer(0, positionsSize, GL_FLOAT, false, vertexSizeBytes, 0);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, colorSize, GL_FLOAT, false, vertexSizeBytes, positionsSize * floatSizeBytes);
+        glVertexAttribPointer(1, colorSize, GL_FLOAT, false, vertexSizeBytes, positionsSize * Float.BYTES);
         glEnableVertexAttribArray(1);
+
+        glVertexAttribPointer(2, uvSize, GL_FLOAT, false, vertexSizeBytes, (positionsSize + colorSize) * Float.BYTES);
+        glEnableVertexAttribArray(2);
     }
 
     @Override
     public void update(float dt) {
-        camera.position.x -= dt * 50.0f;
-        camera.position.y -= dt * 28.0f;
-
         defaultShader.use();
+
+        // Upload texture to shader
+        defaultShader.uploadTexture("TEXT_SAMPLER", 0);
+        glActiveTexture(GL_TEXTURE0);
+        testTexture.bind();
+
         defaultShader.uploadMat4f("uProjection", camera.getProjectionMatrix());
         defaultShader.uploadMat4f("uView", camera.getViewMatrix());
         defaultShader.uploadFloat("uTime", Time.getTime());
