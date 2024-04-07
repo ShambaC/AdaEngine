@@ -32,7 +32,7 @@ public class RenderBatch {
     private Shader shader;
 
     public RenderBatch(int maxBatchSize) {
-        shader = new Shader("assets/shader/default.glsl");
+        shader = new Shader("assets/shaders/default.glsl");
         shader.compile();
 
         this.sprites = new SpriteRenderer[maxBatchSize];
