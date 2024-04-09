@@ -37,7 +37,7 @@ public class RenderBatch {
     private float[] vertices;
     private int[] texSlots = {0, 1, 2, 3, 4, 5, 6, 7};
 
-    private List<Texture> textures = new ArrayList<>();
+    private List<Texture> textures;
 
     private int vaoID, vboID;
     private int maxBatchSize;
@@ -54,6 +54,7 @@ public class RenderBatch {
 
         this.numSprites = 0;
         this.hasRoom = true;
+        this.textures = new ArrayList<>();
     }
 
     public void start() {
