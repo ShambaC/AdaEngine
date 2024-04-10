@@ -36,7 +36,7 @@ void main()
 {
     if (fTexID > 0) {
         int id = int(fTexID);
-        // color = fColor * texture(uTextures[id], fTexCoords);
+//         color = fColor * texture(uTextures[id], fTexCoords);
         color = texture(uTextures[id], fTexCoords) * vec4(1.0, 1.0, 1.0, 1.0);
         // color = vec4(fTexCoords, 0, 1);
     }
