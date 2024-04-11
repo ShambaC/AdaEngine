@@ -1,6 +1,11 @@
 package Ada;
 
+import imgui.ImGui;
+import imgui.flag.ImGuiConfigFlags;
+import imgui.gl3.ImGuiImplGl3;
+import imgui.glfw.ImGuiImplGlfw;
 import org.lwjgl.Version;
+import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import util.Time;
@@ -19,12 +24,20 @@ public class Window {
 
     private static Window window = null;
 
-   private static Scene currentScene;
+    private static Scene currentScene;
+
+    private final ImGuiImplGlfw ImGuiGlfw = new ImGuiImplGlfw();
+    private final ImGuiImplGl3 ImGuiGl3 = new ImGuiImplGl3();
+
+    private String glslVersion = null;
+
+    private ImGuiLayer imguiLayer;
 
     private Window() {
         this.width = 640;
         this.height = 480;
         this.title = "AdaEngine";
+        this.imguiLayer = new ImGuiLayer();
 
         r = 1;
         g = 1;
@@ -62,11 +75,15 @@ public class Window {
         return get().currentScene;
     }
 
-    public  void  run() {
+    public void run() {
         System.out.println("LWGJL: " + Version.getVersion());
 
         init();
         loop();
+
+        ImGuiGl3.dispose();
+        ImGuiGlfw.dispose();
+        ImGui.destroyContext();
 
         // Free the memory
         glfwFreeCallbacks(glfwWindow);
@@ -124,6 +141,11 @@ public class Window {
         // bindings available for use.
         GL.createCapabilities();
 
+        // ImGui init
+        initImGui();
+        ImGuiGlfw.init(glfwWindow, true);
+        ImGuiGl3.init(glslVersion);
+
         // Enable alpha blending
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -131,17 +153,29 @@ public class Window {
         Window.changeScene(0);
     }
 
-    public  void  loop() {
+    public void loop() {
         float beginTime = Time.getTime();
         float endTime = Time.getTime();
         float dt = -1.0f;
 
         while(!glfwWindowShouldClose(glfwWindow)) {
-            // Poll events
             glfwPollEvents();
 
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            ImGuiGlfw.newFrame();
+            ImGui.newFrame();
+            imguiLayer.imgui();
+            ImGui.render();
+            ImGuiGl3.renderDrawData(ImGui.getDrawData());
+
+            if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
+                final long backupWindowPtr = glfwGetCurrentContext();
+                ImGui.updatePlatformWindows();
+                ImGui.renderPlatformWindowsDefault();
+                glfwMakeContextCurrent(backupWindowPtr);
+            }
 
             if(dt >= 0) {
                 currentScene.update(dt);
@@ -153,5 +187,9 @@ public class Window {
             dt = endTime - beginTime;
             beginTime = endTime;
         }
+    }
+
+    private void initImGui() {
+        ImGui.createContext();
     }
 }
