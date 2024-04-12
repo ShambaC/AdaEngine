@@ -1,5 +1,5 @@
 #type vertex
-#version 460
+#version 330 core
 
 layout (location=0) in vec3 aPos;
 layout (location=1) in vec4 aColor;
@@ -22,7 +22,7 @@ void main()
 }
 
 #type fragment
-#version 460
+#version 330 core
 
 in vec4 fColor;
 in vec2 fTexCoords;
@@ -36,8 +36,7 @@ void main()
 {
     if (fTexID > 0) {
         int id = int(fTexID);
-//         color = fColor * texture(uTextures[id], fTexCoords);
-        color = texture(uTextures[id], fTexCoords) * vec4(1.0, 1.0, 1.0, 1.0);
+         color = fColor * texture(uTextures[id], fTexCoords);
         // color = vec4(fTexCoords, 0, 1);
     }
     else {

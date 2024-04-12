@@ -77,15 +77,19 @@ public class RenderBatch implements Comparable<RenderBatch>{
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
         // Enable the buffer attributes pointers
+        // aPos
         glVertexAttribPointer(0, POS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, POS_OFFSET);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, COLOR_SIZE, GL_FLOAT, false, VERTEX_SIZE, COLOR_OFFSET);
+        // aColor
+        glVertexAttribPointer(1, COLOR_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, COLOR_OFFSET);
         glEnableVertexAttribArray(1);
 
+        // aTexCoords
         glVertexAttribPointer(2, TEX_COORDS_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEX_COORDS_OFFSET);
         glEnableVertexAttribArray(2);
 
+        // aTexID
         glVertexAttribPointer(3, TEX_ID_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEX_ID_OFFSET);
         glEnableVertexAttribArray(3);
     }
