@@ -143,7 +143,7 @@ public class Window {
         GL.createCapabilities();
 
         // ImGui init
-        initImGui();
+        imguiLayer.init();
         ImGuiGlfw.init(glfwWindow, true);
         ImGuiGl3.init(glslVersion);
 
@@ -167,7 +167,7 @@ public class Window {
 
             ImGuiGlfw.newFrame();
             ImGui.newFrame();
-            imguiLayer.imgui();
+            imguiLayer.imgui(currentScene);
             ImGui.render();
             ImGuiGl3.renderDrawData(ImGui.getDrawData());
 
@@ -188,12 +188,5 @@ public class Window {
             dt = endTime - beginTime;
             beginTime = endTime;
         }
-    }
-
-    private void initImGui() {
-        ImGui.createContext();
-
-        ImGuiIO io = ImGui.getIO();
-        io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
     }
 }

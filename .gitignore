@@ -44,3 +44,6 @@ bin/
 
 ### Imgui files
 imgui.ini
+
+### Font files
+/assets/fonts
