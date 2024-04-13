@@ -55,3 +55,8 @@ dependencies {
 
     implementation "io.github.spair:imgui-java-natives-windows:$imguiVersion"
 }
+
+// GSON
+dependencies {
+    implementation 'com.google.code.gson:gson:2.10.1'
+}
