@@ -41,4 +41,9 @@ public class Transform {
         Transform t = (Transform) obj;
         return t.position.equals(this.position) && t.scale.equals(this.scale);
     }
+
+    @Override
+    public String toString() {
+        return "Position : " + position.x + " " + position.y + "\nScale: " + scale.x + " " + scale.y;
+    }
 }

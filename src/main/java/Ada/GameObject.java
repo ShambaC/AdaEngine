@@ -76,4 +76,17 @@ public class GameObject {
     public int getzIndex() {
         return this.zIndex;
     }
+
+    @Override
+    public String toString() {
+        String res = "Name: " + name;
+        res += "\nComponents: ";
+        for (Component c : components) {
+            res += c.getClass().toString() + " ";
+        }
+        res += "\nTransform: " + transform;
+        res += "\nzIndex: " + zIndex;
+
+        return res;
+    }
 }
