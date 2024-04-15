@@ -47,3 +47,6 @@ imgui.ini
 
 ### Font files
 /assets/fonts
+
+### Level data
+level.txt

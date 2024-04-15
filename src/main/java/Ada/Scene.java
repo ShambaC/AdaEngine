@@ -48,6 +48,7 @@ public abstract class Scene {
             go.start();
             this.renderer.add(go);
         }
+        System.out.println("Added gameobject : \n" + go);
     }
 
 
@@ -105,7 +106,6 @@ public abstract class Scene {
         if (!inFile.isBlank()) {
             GameObject objs[] = gson.fromJson(inFile, GameObject[].class);
             for (int i = 0; i < objs.length; i++) {
-                System.out.println(objs[i]);
                 addGameObjectToScene(objs[i]);
             }
             this.levelLoaded = true;

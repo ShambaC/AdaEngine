@@ -1,5 +1,6 @@
 package Ada;
 
+import components.Rigidbody;
 import components.Sprite;
 import components.SpriteRenderer;
 import components.Spritesheet;
@@ -23,6 +24,8 @@ public class LevelEditorScene extends Scene {
         this.camera = new Camera(new Vector2f());
 
         if(levelLoaded) {
+            GameObject go = gameObjects.get(0);
+            this.activeGameObject = go;
             return;
         }
 
@@ -33,6 +36,7 @@ public class LevelEditorScene extends Scene {
         SpriteRenderer obj1Sprite = new SpriteRenderer();
         obj1Sprite.setColor(new Vector4f(1, 0, 0, 1));
         obj1.addComponent(obj1Sprite);
+        obj1.addComponent(new Rigidbody());
         this.addGameObjectToScene(obj1);
         this.activeGameObject = obj1;
 
