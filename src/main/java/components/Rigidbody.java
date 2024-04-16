@@ -9,4 +9,13 @@ public class Rigidbody extends Component {
     private float friction = 0.8f;
     public Vector3f velocity = new Vector3f(0, 0, 0);
     public transient Vector4f tmp = new Vector4f(0, 0, 0, 0);
+
+    @Override
+    public String toString() {
+        String res = "Collider type: " + colliderType;
+        res += "\nFriction: " + friction;
+        res += "\nVelocity: " + velocity.x + " " + velocity.y + " " + velocity.z;
+
+        return res;
+    }
 }

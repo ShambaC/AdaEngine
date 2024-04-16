@@ -82,7 +82,8 @@ public class GameObject {
         String res = "Name: " + name;
         res += "\nComponents: ";
         for (Component c : components) {
-            res += c.getClass().toString() + " ";
+            res += c.getClass().toString() + "\n";
+            res += c;
         }
         res += "\nTransform: " + transform;
         res += "\nzIndex: " + zIndex;
