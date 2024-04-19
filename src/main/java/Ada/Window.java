@@ -17,7 +17,8 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
-    private int width, height;
+
+    private static int width, height;
     private String title;
     private long glfwWindow;
 
@@ -190,5 +191,13 @@ public class Window {
         }
 
         currentScene.saveExit();
+    }
+
+    public static int getWidth() {
+        return width;
+    }
+
+    public static int getHeight() {
+        return height;
     }
 }

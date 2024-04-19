@@ -48,7 +48,6 @@ public abstract class Scene {
             go.start();
             this.renderer.add(go);
         }
-        System.out.println("Added gameobject : \n" + go);
     }
 
 
