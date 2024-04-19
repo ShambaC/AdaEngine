@@ -73,18 +73,18 @@ public class MouseListener {
 
     public static float getOrthoX() {
         float currentX = getX();
-        currentX = (currentX / (float) Window.getWidth()) * 2.0f - 1.0f;
+        currentX = (currentX / (float) Window.get().getWidth()) * 2.0f - 1.0f;
         Vector4f world = new Vector4f(currentX, 0, 0, 1);
-        world.mul(Window.getScene().camera().getInverseProjection().mul(Window.getScene().camera().getInverseView()));
+        world.mul(Window.getScene().camera().getInverseProjection()).mul(Window.getScene().camera().getInverseView());
 
         return world.x;
     }
 
     public static float getOrthoY() {
-        float currentY = getY();
-        currentY = (currentY / (float) Window.getWidth()) * 2.0f - 1.0f;
+        float currentY = Window.get().getHeight() - getY();
+        currentY = (currentY / (float) Window.get().getHeight()) * 2.0f - 1.0f;
         Vector4f world = new Vector4f(0, currentY, 0, 1);
-        world.mul(Window.getScene().camera().getInverseProjection().mul(Window.getScene().camera().getInverseView()));
+        world.mul(Window.getScene().camera().getInverseProjection()).mul(Window.getScene().camera().getInverseView());
 
         return world.y;
     }

@@ -1,6 +1,5 @@
 package components;
 
-import Ada.Component;
 import Ada.Transform;
 import imgui.ImGui;
 import org.joml.Vector2f;
@@ -15,17 +14,6 @@ public class SpriteRenderer extends Component {
     private transient Transform lastTransform;
     private transient boolean isDirty = true;
 
-//    public SpriteRenderer(Vector4f color) {
-//        this.color = color;
-//        this.sprite = new Sprite(null);
-//        this.isDirty = true;
-//    }
-//
-//    public SpriteRenderer(Sprite sprite) {
-//        this.sprite = sprite;
-//        this.color = new Vector4f(1, 1, 1, 1);
-//        this.isDirty = true;
-//    }
     @Override
     public void start() {
         this.lastTransform = gameObject.transform.copy();
@@ -61,16 +49,19 @@ public class SpriteRenderer extends Component {
         return sprite.getTexCoords();
     }
 
-    public void setSprite(Sprite sprite) {
+    public SpriteRenderer setSprite(Sprite sprite) {
         this.sprite = sprite;
         this.isDirty = true;
+        return this;
     }
 
-    public void setColor(Vector4f color) {
+    public SpriteRenderer setColor(Vector4f color) {
         if(!this.color.equals(color)) {
             this.color.set(color);
             this.isDirty = true;
         }
+
+        return this;
     }
 
     public boolean isDirty() {

@@ -5,6 +5,7 @@ import imgui.ImFontConfig;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;
+import scenes.Scene;
 
 public class ImGuiLayer {
     private boolean showText = false;

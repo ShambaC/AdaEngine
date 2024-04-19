@@ -1,15 +1,18 @@
 package Ada;
 
 import imgui.ImGui;
-import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import org.lwjgl.Version;
-import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import scenes.LevelEditorScene;
+import scenes.LevelScene;
+import scenes.Scene;
 import util.Time;
+
+import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -18,7 +21,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
 
-    private static int width, height;
+    private int width, height;
     private String title;
     private long glfwWindow;
 
@@ -128,6 +131,9 @@ public class Window {
         // Set up gamepad listener
         glfwSetJoystickCallback(GamePadListener::GamePadCallback);
 
+        // Set up window size callback
+        glfwSetWindowSizeCallback(glfwWindow, WindowListener::windowCallback);
+
         // Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow);
         // Enable v-sync
@@ -135,6 +141,13 @@ public class Window {
 
         // Make the window visible
         glfwShowWindow(glfwWindow);
+
+        // Update variables after initial maximise
+        int[] w = new int[1];
+        int[] h = new int[1];
+        glfwGetWindowSize(glfwWindow, w, h);
+        this.width = w[0];
+        this.height = h[0];
 
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
@@ -193,11 +206,19 @@ public class Window {
         currentScene.saveExit();
     }
 
-    public static int getWidth() {
-        return width;
+    public int getWidth() {
+        return this.width;
     }
 
-    public static int getHeight() {
-        return height;
+    public int getHeight() {
+        return this.height;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 }

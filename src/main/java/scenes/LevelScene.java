@@ -1,4 +1,4 @@
-package Ada;
+package scenes;
 
 public class LevelScene extends Scene {
     public LevelScene() {

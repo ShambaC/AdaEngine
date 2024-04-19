@@ -1,12 +1,14 @@
-package Ada;
+package scenes;
 
+import Ada.Camera;
+import Ada.GameObject;
+import Ada.GameObjectDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import components.SpriteRenderer;
+import components.Component;
 import imgui.ImGui;
 import renderer.Renderer;
-import util.ComponentDeserializer;
-import util.GameObjectDeserializer;
+import components.ComponentDeserializer;
 
 import java.io.FileWriter;
 import java.io.IOException;

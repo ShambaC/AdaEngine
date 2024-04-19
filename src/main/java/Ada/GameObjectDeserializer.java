@@ -1,6 +1,6 @@
-package util;
+package Ada;
 
-import Ada.Component;
+import components.Component;
 import Ada.GameObject;
 import Ada.Transform;
 import com.google.gson.*;

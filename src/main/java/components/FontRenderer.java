@@ -1,7 +1,5 @@
 package components;
 
-import Ada.Component;
-
 public class FontRenderer extends Component {
 
     @Override
