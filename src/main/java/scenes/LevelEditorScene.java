@@ -72,7 +72,7 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void imgui() {
-        ImGui.begin("Test Window");
+        ImGui.begin("Asset Folder");
 
         ImVec2 windowPos = new ImVec2();
         ImGui.getWindowPos(windowPos);
