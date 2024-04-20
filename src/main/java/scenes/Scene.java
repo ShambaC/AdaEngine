@@ -104,7 +104,7 @@ public abstract class Scene {
         catch (IOException e) {
             e.printStackTrace();
         }
-        if (!inFile.isBlank()) {
+        if (!inFile.isBlank() && !inFile.equalsIgnoreCase("[]")) {
             int maxGoId = -1;
             int maxCompId = -1;
             GameObject objs[] = gson.fromJson(inFile, GameObject[].class);

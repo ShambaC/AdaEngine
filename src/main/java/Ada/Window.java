@@ -182,6 +182,11 @@ public class Window {
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            if(dt >= 0) {
+                DebugDraw.draw();
+                currentScene.update(dt);
+            }
+
             ImGuiGlfw.newFrame();
             ImGui.newFrame();
             imguiLayer.imgui(currentScene);
@@ -193,11 +198,6 @@ public class Window {
                 ImGui.updatePlatformWindows();
                 ImGui.renderPlatformWindowsDefault();
                 glfwMakeContextCurrent(backupWindowPtr);
-            }
-
-            if(dt >= 0) {
-                DebugDraw.draw();
-                currentScene.update(dt);
             }
 
             glfwSwapBuffers(glfwWindow);
