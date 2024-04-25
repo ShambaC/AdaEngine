@@ -31,8 +31,9 @@ public class LevelEditorScene extends Scene {
         sprites = AssetPool.getSpritesheet("assets/images/spritesheets/decorationsAndBlocks.png");
 
         if(levelLoaded) {
-            GameObject go = gameObjects.get(0);
-            this.activeGameObject = go;
+            if (!gameObjects.isEmpty()) {
+                this.activeGameObject = gameObjects.get(0);
+            }
             return;
         }
 
@@ -56,11 +57,19 @@ public class LevelEditorScene extends Scene {
     private void loadResources() {
         AssetPool.getShader("assets/shaders/default.glsl");
 
-        // TODO: Fix texture to use path instead of id
         AssetPool.addSpriteSheet("assets/images/spritesheets/decorationsAndBlocks.png",
                 new Spritesheet(AssetPool.getTexture("assets/images/spritesheets/decorationsAndBlocks.png"),
                         16, 16, 84, 0));
         AssetPool.getTexture("assets/images/blendImage2.png");
+
+        for (GameObject g : gameObjects) {
+            if (g.getComponent(SpriteRenderer.class) != null) {
+                SpriteRenderer spr = g.getComponent(SpriteRenderer.class);
+                if (spr.getTexture() != null) {
+                    spr.setTexture(AssetPool.getTexture(spr.getTexture().getFilepath()));
+                }
+            }
+        }
     }
 
     float x = 0.0f;
