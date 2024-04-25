@@ -195,7 +195,9 @@ public class Window {
 
             ImGuiGlfw.newFrame();
             ImGui.newFrame();
+            imguiLayer.setupDockspace();
             imguiLayer.imgui(currentScene);
+            ImGui.end();
             ImGui.render();
             ImGuiGl3.renderDrawData(ImGui.getDrawData());
 

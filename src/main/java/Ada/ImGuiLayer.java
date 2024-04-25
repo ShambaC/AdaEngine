@@ -4,7 +4,11 @@ import imgui.ImFontAtlas;
 import imgui.ImFontConfig;
 import imgui.ImGui;
 import imgui.ImGuiIO;
+import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiConfigFlags;
+import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiWindowFlags;
+import imgui.type.ImBoolean;
 import scenes.Scene;
 
 public class ImGuiLayer {
@@ -34,6 +38,7 @@ public class ImGuiLayer {
 
         ImGuiIO io = ImGui.getIO();
         io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
+        io.setConfigFlags(ImGuiConfigFlags.DockingEnable);
 
         final ImFontAtlas fontAtlas = io.getFonts();
         final ImFontConfig fontConfig = new ImFontConfig();     // natively allocated, must be destroyed
@@ -44,5 +49,29 @@ public class ImGuiLayer {
         fontAtlas.addFontFromFileTTF("assets/fonts/ARLRDBD.ttf", 16, fontConfig);
 
         fontConfig.destroy();
+    }
+
+    public void setupDockspace() {
+        int windowFlags =
+                ImGuiWindowFlags.MenuBar |
+                ImGuiWindowFlags.NoDocking |
+                ImGuiWindowFlags.NoTitleBar |
+                ImGuiWindowFlags.NoCollapse |
+                ImGuiWindowFlags.NoResize |
+                ImGuiWindowFlags.NoMove |
+                ImGuiWindowFlags.NoBringToFrontOnFocus |
+                ImGuiWindowFlags.NoNavFocus;
+
+        ImGui.setNextWindowPos(0.0f, 0.0f, ImGuiCond.Always);
+        ImGui.setNextWindowSize(Window.get().getWidth(), Window.get().getHeight());
+
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowRounding, 0.0f);
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0.0f);
+
+        ImGui.begin("Dockspace", new ImBoolean(true), windowFlags);
+        ImGui.popStyleVar(2);
+
+        // Dockspace
+        ImGui.dockSpace(ImGui.getID("Dockspace"));
     }
 }
