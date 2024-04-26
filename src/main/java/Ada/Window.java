@@ -1,5 +1,6 @@
 package Ada;
 
+import editor.GameViewWindow;
 import imgui.ImGui;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
@@ -169,6 +170,7 @@ public class Window {
 
         // Framebuffer
         this.framebuffer = new Framebuffer(1920, 1080);
+        glViewport(0, 0, 1920, 1080);
 
         Window.changeScene(0);
     }
@@ -183,20 +185,23 @@ public class Window {
 
             DebugDraw.beginFrame();
 
+            this.framebuffer.bind();
+
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            this.framebuffer.bind();
             if(dt >= 0) {
                 DebugDraw.draw();
                 currentScene.update(dt);
             }
+
             this.framebuffer.unbind();
 
             ImGuiGlfw.newFrame();
             ImGui.newFrame();
             imguiLayer.setupDockspace();
             imguiLayer.imgui(currentScene);
+            GameViewWindow.imgui();
             ImGui.end();
             ImGui.render();
             ImGuiGl3.renderDrawData(ImGui.getDrawData());
@@ -232,5 +237,13 @@ public class Window {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public static Framebuffer getFramebuffer() {
+        return get().framebuffer;
+    }
+
+    public static float getTargetAspectRatio() {
+        return 16.0f / 9.0f;
     }
 }
