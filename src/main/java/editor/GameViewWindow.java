@@ -1,9 +1,11 @@
 package editor;
 
+import Ada.MouseListener;
 import Ada.Window;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiWindowFlags;
+import org.joml.Vector2f;
 
 public class GameViewWindow {
 
@@ -14,8 +16,17 @@ public class GameViewWindow {
         ImVec2 windowPos = getCenterPositionForViewport(windowSize);
 
         ImGui.setCursorPos(windowPos.x, windowPos.y);
+
+        ImVec2 topLeft = new ImVec2();
+        ImGui.getCursorScreenPos(topLeft);
+        topLeft.x -= ImGui.getScrollX();
+        topLeft.y -= ImGui.getScrollY();
+
         int textureId = Window.getFramebuffer().getTextureId();
         ImGui.image(textureId, windowSize.x, windowSize.y, 0, 1, 1, 0);
+
+        MouseListener.get().setGameViewportPos(new Vector2f(topLeft.x, topLeft.y));
+        MouseListener.get().setGameViewportSize(new Vector2f(windowSize.x, windowSize.y));
 
         ImGui.end();
     }
