@@ -137,6 +137,20 @@ public class MouseListener {
         this.gameViewportSize.set(gameViewportSize);
     }
 
+    public static float getScreenX() {
+        float currentX = getX() - get().gameViewportPos.x;
+        currentX = (currentX / get().gameViewportSize.x) * 1920.0f;
+
+        return currentX;
+    }
+
+    public static float getScreenY() {
+        float currentY = getY() - get().gameViewportPos.y;
+        currentY = 1080.0f -((currentY / get().gameViewportSize.y) * 1080.0f);
+
+        return currentY;
+    }
+
     public boolean isInViewPort() {
         float bottom = gameViewportPos.y;
         float left = gameViewportPos.x;
