@@ -21,14 +21,14 @@ public class MouseControls extends Component {
 
     @Override
     public void update(float dt) {
-        if (holdingObject != null) {
+        if (holdingObject != null && MouseListener.get().isInViewPort()) {
             holdingObject.transform.position.x = MouseListener.getOrthoX();
             holdingObject.transform.position.y = MouseListener.getOrthoY();
 
             holdingObject.transform.position.x = (int)(holdingObject.transform.position.x / Settings.GRID_WIDTH) * Settings.GRID_WIDTH;
             holdingObject.transform.position.y = (int)(holdingObject.transform.position.y / Settings.GRID_HEIGHT) * Settings.GRID_HEIGHT;
 
-            if (MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) && MouseListener.get().isInViewPort()) {
+            if (MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
                 place();
             }
         }
