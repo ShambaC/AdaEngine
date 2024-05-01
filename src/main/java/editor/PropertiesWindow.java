@@ -29,10 +29,13 @@ public class PropertiesWindow {
     }
 
     public void imgui() {
+        ImGui.begin("Inspector");
         if (activeGameObject != null) {
-            ImGui.begin("Inspector");
             activeGameObject.imgui();
-            ImGui.end();
         }
+        else {
+            ImGui.text("Select a gameobject to inspect");
+        }
+        ImGui.end();
     }
 }
