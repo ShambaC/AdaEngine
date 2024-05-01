@@ -1,6 +1,7 @@
 package Ada;
 
 import editor.GameViewWindow;
+import editor.PropertiesWindow;
 import imgui.ImGui;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
@@ -35,6 +36,9 @@ public class Window {
 
     private static Window window = null;
 
+    private GameViewWindow gameViewWindow;
+    private PropertiesWindow propertiesWindow;
+
     private static Scene currentScene;
 
     private final ImGuiImplGlfw ImGuiGlfw = new ImGuiImplGlfw();
@@ -52,6 +56,8 @@ public class Window {
         g = 1;
         b = 1;
         a = 1;
+
+        this.gameViewWindow = new GameViewWindow();
     }
 
     public static void changeScene(int newScene) {
@@ -172,6 +178,7 @@ public class Window {
         // Framebuffer
         this.framebuffer = new Framebuffer(1920, 1080);
         this.pickingTexture = new PickingTexture(1920, 1080);
+        this.propertiesWindow = new PropertiesWindow(pickingTexture);
         glViewport(0, 0, 1920, 1080);
 
         Window.changeScene(0);
@@ -199,13 +206,6 @@ public class Window {
             Renderer.bindShader(pickingShader);
             currentScene.render();
 
-            if(MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
-                int x = (int) MouseListener.getScreenX();
-                int y = (int) MouseListener.getScreenY();
-
-                System.out.println(pickingTexture.readPixel(x, y));
-            }
-
             pickingTexture.disableWriting();
             glEnable(GL_BLEND);
 
@@ -228,9 +228,14 @@ public class Window {
 
             ImGuiGlfw.newFrame();
             ImGui.newFrame();
+
             imguiLayer.setupDockspace();
             imguiLayer.imgui(currentScene);
-            GameViewWindow.imgui();
+
+            gameViewWindow.imgui();
+            propertiesWindow.update(dt, currentScene);
+            propertiesWindow.imgui();
+
             ImGui.end();
             ImGui.render();
             ImGuiGl3.renderDrawData(ImGui.getDrawData());

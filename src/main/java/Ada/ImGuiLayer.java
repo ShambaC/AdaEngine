@@ -15,7 +15,7 @@ public class ImGuiLayer {
     private boolean showText = false;
 
     public void imgui(Scene currentScene) {
-        currentScene.sceneImgui();
+        currentScene.imgui();
         ImGui.begin("New Window");
 
         if (ImGui.button("I am a button")) {
