@@ -248,6 +248,7 @@ public class Window {
             }
 
             glfwSwapBuffers(glfwWindow);
+            MouseListener.endFrame();
 
             endTime = Time.getTime();
             dt = endTime - beginTime;
