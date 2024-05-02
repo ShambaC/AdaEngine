@@ -37,6 +37,7 @@ public class Window {
     private static Window window = null;
 
     private GameViewWindow gameViewWindow;
+
     private PropertiesWindow propertiesWindow;
 
     private static Scene currentScene;
@@ -280,5 +281,9 @@ public class Window {
 
     public static float getTargetAspectRatio() {
         return 16.0f / 9.0f;
+    }
+
+    public PropertiesWindow getPropertiesWindow() {
+        return propertiesWindow;
     }
 }
