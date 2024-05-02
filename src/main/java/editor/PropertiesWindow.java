@@ -27,7 +27,14 @@ public class PropertiesWindow {
             int y = (int) MouseListener.getScreenY();
 
             if (MouseListener.get().isInViewPort()) {
-                activeGameObject = currentScene.getGameObject(pickingTexture.readPixel(x, y));
+                GameObject tempObj = currentScene.getGameObject(pickingTexture.readPixel(x, y));
+                // Conditions to not set the gizmo as the active gameobject
+                if (tempObj == null) {
+                    activeGameObject = null;
+                }
+                else {
+                    activeGameObject = tempObj.doSerialization() ? tempObj : activeGameObject;
+                }
             }
 
             this.debounce = 0.2f;
