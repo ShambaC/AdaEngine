@@ -25,8 +25,8 @@ public class TranslateGizmo extends Component{
     private PropertiesWindow propertiesWindow;
 
     public TranslateGizmo(Sprite arrowSprite, PropertiesWindow propertiesWindow) {
-        this.xAxisObject = Prefabs.generateSpriteObject(arrowSprite, 16, 48);
-        this.yAxisObject = Prefabs.generateSpriteObject(arrowSprite, 16, 48);
+        this.xAxisObject = Prefabs.generateSpriteObject(arrowSprite, 16, 48).setzIndex(100);
+        this.yAxisObject = Prefabs.generateSpriteObject(arrowSprite, 16, 48).setzIndex(100);
         this.xAxisSprite = this.xAxisObject.getComponent(SpriteRenderer.class);
         this.yAxisSprite = this.yAxisObject.getComponent(SpriteRenderer.class);
         this.propertiesWindow = propertiesWindow;

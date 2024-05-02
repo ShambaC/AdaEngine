@@ -79,6 +79,11 @@ public class GameObject {
         return this.zIndex;
     }
 
+    public GameObject setzIndex(int zIndex) {
+        this.zIndex = zIndex;
+        return this;
+    }
+
     @Override
     public String toString() {
         String res = "Name: " + name;
