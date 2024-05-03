@@ -8,3 +8,6 @@ A Work in progress 2D game engine.
 - Add the ability for users to script and create custom components
 - Ability to properly export game while stripping unneeded engine stuff
 - Export the Engine properly
+
+## TODO:
+- [ ] Add a plane to the translate gizmo
