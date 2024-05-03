@@ -37,8 +37,8 @@ public class Gizmo extends Component {
     private PropertiesWindow propertiesWindow;
 
     public Gizmo(Sprite arrowSprite, PropertiesWindow propertiesWindow) {
-        this.xAxisObject = Prefabs.generateSpriteObject(arrowSprite, 16, 48).setzIndex(100);
-        this.yAxisObject = Prefabs.generateSpriteObject(arrowSprite, 16, 48).setzIndex(100);
+        this.xAxisObject = Prefabs.generateSpriteObject(arrowSprite, 16, 48);
+        this.yAxisObject = Prefabs.generateSpriteObject(arrowSprite, 16, 48);
         this.xAxisSprite = this.xAxisObject.getComponent(SpriteRenderer.class);
         this.yAxisSprite = this.yAxisObject.getComponent(SpriteRenderer.class);
         this.propertiesWindow = propertiesWindow;
@@ -51,6 +51,8 @@ public class Gizmo extends Component {
     public void start() {
         this.xAxisObject.transform.rotation = 90;
         this.yAxisObject.transform.rotation = 180;
+        this.xAxisObject.transform.zIndex = 100;
+        this.yAxisObject.transform.zIndex = 100;
         this.xAxisObject.setNoSerialize();
         this.xAxisObject.setNotPickable();
         this.yAxisObject.setNoSerialize();
