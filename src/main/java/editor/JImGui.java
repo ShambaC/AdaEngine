@@ -99,6 +99,22 @@ public class JImGui {
         return valArr[0];
     }
 
+    public static boolean checkBox(String label, boolean value) {
+        ImGui.pushID(label);
+
+        ImGui.columns(2);
+        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 3.0f);
+        ImGui.text(label);
+        ImGui.nextColumn();
+
+        ImGui.checkbox("##dragFloat", value);
+
+        ImGui.columns(1);
+        ImGui.popID();
+
+        return value;
+    }
+
     public static boolean colorPicker4(String label, Vector4f color) {
         boolean res = false;
         ImGui.pushID(label);
