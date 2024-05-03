@@ -33,7 +33,7 @@ public class PropertiesWindow {
                     activeGameObject = null;
                 }
                 else {
-                    activeGameObject = tempObj.doSerialization() ? tempObj : activeGameObject;
+                    activeGameObject = tempObj.isPickable() ? tempObj : activeGameObject;
                 }
             }
 

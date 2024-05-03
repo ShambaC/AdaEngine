@@ -16,6 +16,7 @@ public class GameObject {
     private int zIndex;
 
     private boolean doSerialization = true;
+    private boolean isPickable = true;
 
     public GameObject(String name, Transform transform, int zIndex) {
         this.name = name;
@@ -116,5 +117,13 @@ public class GameObject {
 
     public boolean doSerialization() {
         return this.doSerialization;
+    }
+
+    public void setNotPickable() {
+        this.isPickable = false;
+    }
+
+    public boolean isPickable() {
+        return this.isPickable;
     }
 }
