@@ -10,4 +10,4 @@ A Work in progress 2D game engine.
 - Export the Engine properly
 
 ## TODO:
-- [ ] Add a plane to the translate gizmo
+- [ ] Add a free move plane to the translate gizmo
