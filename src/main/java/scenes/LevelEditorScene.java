@@ -73,7 +73,7 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void imgui() {
-        ImGui.begin("Level Editor Stuff");
+        ImGui.begin("Engine Settings");
         levelEditorStuff.imgui();
         ImGui.end();
 
