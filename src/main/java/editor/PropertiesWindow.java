@@ -3,6 +3,9 @@ package editor;
 import Ada.GameObject;
 import Ada.MouseListener;
 import imgui.ImGui;
+import physics2d.components.Box2DCollider;
+import physics2d.components.CircleCollider;
+import physics2d.components.Rigidbody2D;
 import renderer.PickingTexture;
 import scenes.Scene;
 
@@ -45,6 +48,41 @@ public class PropertiesWindow {
         ImGui.begin("Inspector");
         if (activeGameObject != null) {
             activeGameObject.imgui();
+
+            ImGui.separator();
+            ImGui.setCursorPos(0, ImGui.getWindowHeight() - 30);
+
+            if (ImGui.button("Add Component", ImGui.getWindowWidth(), 30)) {
+                ImGui.openPopup("ComponentMenu");
+            }
+
+            if (ImGui.beginPopup("ComponentMenu")) {
+                if (ImGui.beginMenu("Physics")) {
+                    if (ImGui.menuItem("Rigidbody")) {
+                        if (activeGameObject.getComponent(Rigidbody2D.class) == null) {
+                            activeGameObject.addComponent(new Rigidbody2D());
+                        }
+                    }
+
+                    if (ImGui.menuItem("Box Collider")) {
+                        if (activeGameObject.getComponent(Box2DCollider.class) == null &&
+                            activeGameObject.getComponent(CircleCollider.class) == null) {
+                            activeGameObject.addComponent(new Box2DCollider());
+                        }
+                    }
+
+                    if (ImGui.menuItem("Circle Collider")) {
+                        if (activeGameObject.getComponent(CircleCollider.class) == null &&
+                                activeGameObject.getComponent(Box2DCollider.class) == null) {
+                            activeGameObject.addComponent(new CircleCollider());
+                        }
+                    }
+
+                    ImGui.endMenu();
+                }
+
+                ImGui.endPopup();
+            }
         }
         else {
             ImGui.text("Select a gameobject to inspect");

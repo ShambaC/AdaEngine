@@ -16,7 +16,7 @@ public class JImGui {
         ImGui.pushID(label);
 
         ImGui.columns(2);
-        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 3.0f);
+        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
         ImGui.nextColumn();
 
@@ -69,7 +69,7 @@ public class JImGui {
         ImGui.pushID(label);
 
         ImGui.columns(2);
-        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 3.0f);
+        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
         ImGui.nextColumn();
 
@@ -86,7 +86,7 @@ public class JImGui {
         ImGui.pushID(label);
 
         ImGui.columns(2);
-        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 3.0f);
+        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
         ImGui.nextColumn();
 
@@ -103,7 +103,7 @@ public class JImGui {
         ImGui.pushID(label);
 
         ImGui.columns(2);
-        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 3.0f);
+        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
         ImGui.nextColumn();
 
@@ -120,7 +120,7 @@ public class JImGui {
         ImGui.pushID(label);
 
         ImGui.columns(2);
-        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 3.0f);
+        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
         ImGui.nextColumn();
 
