@@ -61,6 +61,13 @@ public class Gizmo extends Component {
 
     @Override
     public void update(float dt) {
+        if (isUsing) {
+            this.setInactive();
+        }
+    }
+
+    @Override
+    public void editorUpdate(float dt) {
         if (!isUsing) {
             this.setInactive();
             return;

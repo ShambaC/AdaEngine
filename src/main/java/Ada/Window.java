@@ -1,29 +1,32 @@
 package Ada;
 
 import editor.GameViewWindow;
+import editor.MenuBar;
 import editor.PropertiesWindow;
 import imgui.ImGui;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
+import observers.EventSystem;
+import observers.Observer;
+import observers.events.Event;
+import observers.events.EventType;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import renderer.*;
-import scenes.LevelEditorScene;
-import scenes.LevelScene;
+import scenes.LevelEditorSceneInitializer;
 import scenes.Scene;
+import scenes.SceneInitializer;
 import util.AssetPool;
 import util.Time;
-
-import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window {
+public class Window implements Observer {
 
     private int width, height;
     private String title;
@@ -39,8 +42,10 @@ public class Window {
     private GameViewWindow gameViewWindow;
 
     private PropertiesWindow propertiesWindow;
+    private MenuBar menuBar;
 
     private static Scene currentScene;
+    private boolean runtimePlay = false;
 
     private final ImGuiImplGlfw ImGuiGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 ImGuiGl3 = new ImGuiImplGl3();
@@ -51,6 +56,9 @@ public class Window {
         this.width = 640;
         this.height = 480;
         this.title = "AdaEngine";
+
+        EventSystem.addObserver(this);
+
         this.imguiLayer = new ImGuiLayer();
 
         r = 1;
@@ -61,19 +69,13 @@ public class Window {
         this.gameViewWindow = new GameViewWindow();
     }
 
-    public static void changeScene(int newScene) {
-        switch (newScene) {
-            case 0:
-                currentScene = new LevelEditorScene();
-                break;
-            case 1:
-                currentScene = new LevelScene();
-                break;
-            default:
-                assert false : "Unknown scene '" + newScene + "'";
-                break;
+    public static void changeScene(SceneInitializer sceneInitializer) {
+        if (currentScene != null) {
+            currentScene.destroy();
         }
 
+        Window.get().getPropertiesWindow().setActiveGameObject(null);
+        currentScene = new Scene(sceneInitializer);
         currentScene.load();
         currentScene.init();
         currentScene.start();
@@ -180,9 +182,10 @@ public class Window {
         this.framebuffer = new Framebuffer(1920, 1080);
         this.pickingTexture = new PickingTexture(1920, 1080);
         this.propertiesWindow = new PropertiesWindow(pickingTexture);
+        this.menuBar = new MenuBar();
         glViewport(0, 0, 1920, 1080);
 
-        Window.changeScene(0);
+        Window.changeScene(new LevelEditorSceneInitializer());
     }
 
     public void loop() {
@@ -221,7 +224,12 @@ public class Window {
             if(dt >= 0) {
                 DebugDraw.draw();
                 Renderer.bindShader(defaultShader);
-                currentScene.update(dt);
+                if (runtimePlay) {
+                    currentScene.update(dt);
+                }
+                else {
+                    currentScene.editorUpdate(dt);
+                }
                 currentScene.render();
             }
 
@@ -236,6 +244,7 @@ public class Window {
             gameViewWindow.imgui();
             propertiesWindow.update(dt, currentScene);
             propertiesWindow.imgui();
+            menuBar.imgui();
 
             ImGui.end();
             ImGui.render();
@@ -256,7 +265,7 @@ public class Window {
             beginTime = endTime;
         }
 
-        currentScene.saveExit();
+        EventSystem.notify(null, new Event(EventType.SaveLevel));
     }
 
     public int getWidth() {
@@ -285,5 +294,27 @@ public class Window {
 
     public PropertiesWindow getPropertiesWindow() {
         return propertiesWindow;
+    }
+
+    @Override
+    public void onNotify(GameObject object, Event event) {
+
+        switch (event.type) {
+            case GameEngineStartPlay:
+                this.runtimePlay = true;
+                currentScene.save();
+                Window.changeScene(new LevelEditorSceneInitializer());
+                break;
+            case GameEngineStopPlay:
+                this.runtimePlay = false;
+                Window.changeScene(new LevelEditorSceneInitializer());
+                break;
+            case LoadLevel:
+                Window.changeScene(new LevelEditorSceneInitializer());
+                break;
+            case SaveLevel:
+                currentScene.save();
+                break;
+        }
     }
 }
