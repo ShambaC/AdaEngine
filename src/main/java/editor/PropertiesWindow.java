@@ -56,6 +56,8 @@ public class PropertiesWindow {
                 ImGui.openPopup("ComponentMenu");
             }
 
+            ImGui.setNextWindowSize(ImGui.getWindowWidth(), 0);
+
             if (ImGui.beginPopup("ComponentMenu")) {
                 if (ImGui.beginMenu("Physics")) {
                     if (ImGui.menuItem("Rigidbody")) {
