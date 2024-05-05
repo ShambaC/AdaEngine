@@ -43,7 +43,7 @@ public class EditorCamera extends Component {
         }
 
         // Zooming in editor
-        if (MouseListener.getScrollY() != 0.0f) {
+        if (MouseListener.getScrollY() != 0.0f && MouseListener.get().isInViewPort()) {
             float addvalue = (float) Math.pow(Math.abs(MouseListener.getScrollY() * scrollSensitivity), 1 / levelEditorCamera.getZoom());
             addvalue *= -Math.signum(MouseListener.getScrollY());
 
