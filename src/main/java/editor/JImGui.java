@@ -3,6 +3,7 @@ package editor;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
+import imgui.type.ImInt;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -127,6 +128,25 @@ public class JImGui {
         float[] imColor = {color.x, color.y, color.z, color.w};
         if (ImGui.colorEdit4("##colorPicker", imColor)) {
             color.set(imColor[0], imColor[1], imColor[2], imColor[3]);
+            res = true;
+        }
+
+        ImGui.columns(1);
+        ImGui.popID();
+
+        return res;
+    }
+
+    public static boolean comboBox(String label, ImInt index, String[] enumValues) {
+        boolean res = false;
+        ImGui.pushID(label);
+
+        ImGui.columns(2);
+        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
+        ImGui.text(label);
+        ImGui.nextColumn();
+
+        if (ImGui.combo("", index, enumValues, enumValues.length)) {
             res = true;
         }
 

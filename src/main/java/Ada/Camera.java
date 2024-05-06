@@ -4,10 +4,14 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+/**
+ * Camera class for in-game camera.
+ * This is also what projects to the viewport window.
+ */
 public class Camera {
     private Matrix4f projectionMatrix, viewMatrix, inverseProjection, inverseView;
     private Vector2f position;
-    private Vector2f projectionSize = new Vector2f(32.0f * 40.0f, 32.0f * 21.0f);
+    private Vector2f projectionSize = new Vector2f(6, 3);
 
     private float zoom = 1.0f;
 
