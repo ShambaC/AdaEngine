@@ -82,6 +82,11 @@ public class Gizmo extends Component {
                 this.propertiesWindow.setActiveGameObject(newObj);
                 return;
             }
+            else if (KeyListener.keyBeginPress(GLFW_KEY_DELETE)) {
+                activeGameObject.destroy();
+                this.setInactive();
+                this.propertiesWindow.setActiveGameObject(null);
+            }
         }
         else {
             this.setInactive();
