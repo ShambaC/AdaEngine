@@ -56,10 +56,10 @@ public class PropertiesWindow {
                 ImGui.openPopup("ComponentMenu");
             }
 
-            ImGui.setNextWindowSize(ImGui.getWindowWidth(), 0);
+            ImGui.setNextWindowSize(ImGui.getWindowWidth(), ImGui.getWindowHeight() / 2.5f);
 
             if (ImGui.beginPopup("ComponentMenu")) {
-                if (ImGui.beginMenu("Physics")) {
+                if (ImGui.collapsingHeader("Physics")) {
                     if (ImGui.menuItem("Rigidbody")) {
                         if (activeGameObject.getComponent(Rigidbody2D.class) == null) {
                             activeGameObject.addComponent(new Rigidbody2D());
@@ -80,7 +80,7 @@ public class PropertiesWindow {
                         }
                     }
 
-                    ImGui.endMenu();
+//                    ImGui.endMenu();
                 }
 
                 ImGui.endPopup();
