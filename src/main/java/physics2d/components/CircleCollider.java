@@ -17,7 +17,9 @@ public class CircleCollider extends Collider {
 
     @Override
     public void editorUpdate(float dt) {
-        Vector2f center = new Vector2f(this.gameObject.transform.position).add(this.offset);
-        DebugDraw.addCircle(center, this.radius);
+        if (gameObject.isPicked()) {
+            Vector2f center = new Vector2f(this.gameObject.transform.position).add(this.offset);
+            DebugDraw.addCircle(center, this.radius);
+        }
     }
 }

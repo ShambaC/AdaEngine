@@ -32,12 +32,18 @@ public class PropertiesWindow {
             if (MouseListener.get().isInViewPort()) {
                 GameObject tempObj = currentScene.getGameObject(pickingTexture.readPixel(x, y));
                 // Conditions to not set the gizmo as the active gameobject
+                if (activeGameObject != null) {
+                    activeGameObject.setIsPicked(false);
+                }
+
                 if (tempObj == null) {
                     activeGameObject = null;
                 }
-                else {
-                    activeGameObject = tempObj.isPickable() ? tempObj : activeGameObject;
+                else if (tempObj.isPickable()) {
+                    activeGameObject = tempObj;
+                    activeGameObject.setIsPicked(true);
                 }
+
             }
 
             this.debounce = 0.2f;

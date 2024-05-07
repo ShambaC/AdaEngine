@@ -25,6 +25,8 @@ public class GameObject {
     private boolean isPickable = true;
     private boolean isDead = false;
 
+    private transient boolean isPicked = false;
+
     public GameObject(String name) {
         this.name = name;
         this.components = new ArrayList<>();
@@ -138,6 +140,14 @@ public class GameObject {
 
     public boolean isPickable() {
         return this.isPickable;
+    }
+
+    public void setIsPicked(boolean val) {
+        this.isPicked = val;
+    }
+
+    public boolean isPicked() {
+        return  this.isPicked;
     }
 
     public GameObject copy() {
