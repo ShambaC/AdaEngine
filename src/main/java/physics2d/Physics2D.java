@@ -2,6 +2,7 @@ package physics2d;
 
 import Ada.GameObject;
 import components.Transform;
+import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -50,14 +51,21 @@ public class Physics2D {
                     break;
             }
 
-            PolygonShape shape = new PolygonShape();
             CircleCollider circleCollider;
             Box2DCollider boxCollider;
 
             if ((circleCollider = go.getComponent(CircleCollider.class)) != null) {
-                shape.setRadius(circleCollider.getRadius());
+                CircleShape circleShape = new CircleShape();
+
+                circleShape.setRadius(circleCollider.getRadius());
+
+                Body body = this.world.createBody(bodyDef);
+                rb.setRawBody(body);
+                body.createFixture(circleShape, rb.getMass());
             }
             else if ((boxCollider = go.getComponent(Box2DCollider.class)) != null) {
+                PolygonShape shape = new PolygonShape();
+
                 Vector2f halfSize = new Vector2f(boxCollider.getHalfSize());
                 halfSize.mul(0.5f);
                 Vector2f offSet = boxCollider.getOffset();
@@ -68,11 +76,11 @@ public class Physics2D {
                 float xPos = pos.x + offSet.x;
                 float yPos = pos.y + offSet.y;
                 bodyDef.position.set(xPos, yPos);
-            }
 
-            Body body = this.world.createBody(bodyDef);
-            rb.setRawBody(body);
-            body.createFixture(shape, rb.getMass());
+                Body body = this.world.createBody(bodyDef);
+                rb.setRawBody(body);
+                body.createFixture(shape, rb.getMass());
+            }
         }
     }
 
