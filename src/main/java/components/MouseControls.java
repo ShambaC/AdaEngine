@@ -25,8 +25,8 @@ public class MouseControls extends Component {
             holdingObject.transform.position.x = MouseListener.getOrthoX();
             holdingObject.transform.position.y = MouseListener.getOrthoY();
 
-            holdingObject.transform.position.x = (int)(holdingObject.transform.position.x / Settings.GRID_WIDTH) * Settings.GRID_WIDTH;
-            holdingObject.transform.position.y = (int)(holdingObject.transform.position.y / Settings.GRID_HEIGHT) * Settings.GRID_HEIGHT;
+            holdingObject.transform.position.x = (int)(holdingObject.transform.position.x / Settings.GRID_WIDTH) * Settings.GRID_WIDTH + (holdingObject.transform.scale.x / 2);
+            holdingObject.transform.position.y = (int)(holdingObject.transform.position.y / Settings.GRID_HEIGHT) * Settings.GRID_HEIGHT + (holdingObject.transform.scale.y / 2);
 
             if (MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
                 place();
