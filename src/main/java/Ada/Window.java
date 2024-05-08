@@ -3,6 +3,7 @@ package Ada;
 import editor.GameViewWindow;
 import editor.MenuBar;
 import editor.PropertiesWindow;
+import editor.SceneHierarchyWindow;
 import imgui.ImGui;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
@@ -40,9 +41,9 @@ public class Window implements Observer {
     private static Window window = null;
 
     private GameViewWindow gameViewWindow;
-
     private PropertiesWindow propertiesWindow;
     private MenuBar menuBar;
+    private SceneHierarchyWindow sceneHierarchyWindow;
 
     private static Scene currentScene;
     private boolean runtimePlay = false;
@@ -183,6 +184,8 @@ public class Window implements Observer {
         this.pickingTexture = new PickingTexture(1920, 1080);
         this.propertiesWindow = new PropertiesWindow(pickingTexture);
         this.menuBar = new MenuBar();
+        this.sceneHierarchyWindow = new SceneHierarchyWindow();
+
         glViewport(0, 0, 1920, 1080);
 
         Window.changeScene(new LevelEditorSceneInitializer());
@@ -245,6 +248,7 @@ public class Window implements Observer {
             propertiesWindow.update(dt, currentScene);
             propertiesWindow.imgui();
             menuBar.imgui();
+            sceneHierarchyWindow.imgui();
 
             ImGui.end();
             ImGui.render();

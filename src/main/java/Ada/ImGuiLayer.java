@@ -10,21 +10,6 @@ public class ImGuiLayer {
 
     public void imgui(Scene currentScene) {
         currentScene.imgui();
-        ImGui.begin("New Window");
-
-        if (ImGui.button("I am a button")) {
-            showText = true;
-        }
-
-        if(showText) {
-            ImGui.text("You clicked a button");
-            ImGui.sameLine();
-            if(ImGui.button("Stop showing text")) {
-                showText = false;
-            }
-        }
-
-        ImGui.end();
     }
 
     public void init() {
