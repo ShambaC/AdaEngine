@@ -88,11 +88,13 @@ public class GameObject {
         for (int i = 0; i < components.size(); i++) {
             Component c = components.get(i);
             if (ImGui.collapsingHeader(c.getClass().getSimpleName())) {
-                if (ImGui.beginPopupContextItem(c.getClass().getSimpleName() + "options")) {
-                    if (ImGui.menuItem("Remove Component")) {
-                        this.removeComponent(c.getClass());
+                if (!c.getClass().getSimpleName().equalsIgnoreCase("Transform")) {
+                    if (ImGui.beginPopupContextItem(c.getClass().getSimpleName() + "options")) {
+                        if (ImGui.menuItem("Remove Component")) {
+                            this.removeComponent(c.getClass());
+                        }
+                        ImGui.endPopup();
                     }
-                    ImGui.endPopup();
                 }
                 c.imgui();
             }
