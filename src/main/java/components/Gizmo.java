@@ -12,11 +12,15 @@ public class Gizmo extends Component {
     private Vector4f xAxisColorHover = new Vector4f(1, 0, 0, 1);
     private Vector4f yAxisColor = new Vector4f(0, 0.75f, 0, 1);
     private Vector4f yAxisColorHover = new Vector4f(0, 1, 0, 1);
+    private Vector4f freeMoveColor = new Vector4f(0.17f, 0.87f, 0.25f, 1);
+    private Vector4f freeMoveColorHover = new Vector4f(0.12f, 0.63f, 0.18f, 1);
 
     private GameObject xAxisObject;
     private GameObject yAxisObject;
+    private GameObject freeMoveObject;
     private SpriteRenderer xAxisSprite;
     private SpriteRenderer yAxisSprite;
+    private SpriteRenderer freeMoveSprite;
 
     protected GameObject activeGameObject = null;
 
@@ -25,9 +29,11 @@ public class Gizmo extends Component {
 
     private float gizmoWidth = 16f / 80f;
     private float gizmoHeight = 48f / 80f;
+    private float freeMoveSize = 24f / 100f;
 
     protected boolean xAxisActive = false;
     protected boolean yAxisActive = false;
+    protected boolean freeMoveActive = false;
 
     private boolean isUsing = false;
 
@@ -36,12 +42,28 @@ public class Gizmo extends Component {
     public Gizmo(Sprite arrowSprite, PropertiesWindow propertiesWindow) {
         this.xAxisObject = Prefabs.generateSpriteObject(arrowSprite, gizmoWidth, gizmoHeight);
         this.yAxisObject = Prefabs.generateSpriteObject(arrowSprite, gizmoWidth, gizmoHeight);
+        this.freeMoveObject = null;
         this.xAxisSprite = this.xAxisObject.getComponent(SpriteRenderer.class);
         this.yAxisSprite = this.yAxisObject.getComponent(SpriteRenderer.class);
+        this.freeMoveSprite = null;
         this.propertiesWindow = propertiesWindow;
 
         Window.getScene().addGameObjectToScene(this.xAxisObject);
         Window.getScene().addGameObjectToScene(this.yAxisObject);
+    }
+
+    public Gizmo(Sprite arrowSprite, PropertiesWindow propertiesWindow, Sprite freeMoveSprite) {
+        this.xAxisObject = Prefabs.generateSpriteObject(arrowSprite, gizmoWidth, gizmoHeight);
+        this.yAxisObject = Prefabs.generateSpriteObject(arrowSprite, gizmoWidth, gizmoHeight);
+        this.freeMoveObject = Prefabs.generateSpriteObject(freeMoveSprite, freeMoveSize, freeMoveSize);
+        this.xAxisSprite = this.xAxisObject.getComponent(SpriteRenderer.class);
+        this.yAxisSprite = this.yAxisObject.getComponent(SpriteRenderer.class);
+        this.freeMoveSprite = this.freeMoveObject.getComponent(SpriteRenderer.class);
+        this.propertiesWindow = propertiesWindow;
+
+        Window.getScene().addGameObjectToScene(this.xAxisObject);
+        Window.getScene().addGameObjectToScene(this.yAxisObject);
+        Window.getScene().addGameObjectToScene(this.freeMoveObject);
     }
 
     @Override
@@ -54,6 +76,12 @@ public class Gizmo extends Component {
         this.xAxisObject.setNotPickable();
         this.yAxisObject.setNoSerialize();
         this.yAxisObject.setNotPickable();
+
+        if (freeMoveObject != null) {
+            this.freeMoveObject.transform.zIndex = 100;
+            this.freeMoveObject.setNoSerialize();
+            this.freeMoveObject.setNotPickable();
+        }
     }
 
     @Override
@@ -95,16 +123,25 @@ public class Gizmo extends Component {
 
         boolean xAxisHot = checkXHoverState();
         boolean yAxisHot = checkYHoverState();
+        boolean freeHot = checkFreeHoverState();
 
         if ((xAxisHot || xAxisActive) && MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
             xAxisActive = true;
             yAxisActive = false;
+            freeMoveActive = false;
         }
         else if ((yAxisHot || yAxisActive) && MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
             yAxisActive = true;
             xAxisActive = false;
+            freeMoveActive = false;
+        }
+        else if ((freeHot || freeMoveActive) && MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+            freeMoveActive = true;
+            yAxisActive = false;
+            xAxisActive = false;
         }
         else {
+            freeMoveActive = false;
             xAxisActive = false;
             yAxisActive = false;
         }
@@ -114,18 +151,29 @@ public class Gizmo extends Component {
             this.yAxisObject.transform.position.set(this.activeGameObject.transform.position);
             this.xAxisObject.transform.position.add(this.xAxisOffset);
             this.yAxisObject.transform.position.add(this.yAxisOffset);
+
+            if (freeMoveObject != null) {
+                this.freeMoveObject.transform.position.set(this.activeGameObject.transform.position);
+            }
         }
     }
 
     private void setActive() {
         this.xAxisSprite.setColor(xAxisColor);
         this.yAxisSprite.setColor(yAxisColor);
+
+        if (freeMoveObject != null) {
+            this.freeMoveSprite.setColor(freeMoveColor);
+        }
     }
 
     private void setInactive() {
         this.activeGameObject = null;
         this.xAxisSprite.setColor(new Vector4f(0, 0, 0, 0));
         this.yAxisSprite.setColor(new Vector4f(0, 0, 0, 0));
+        if (freeMoveObject != null) {
+            this.freeMoveSprite.setColor(new Vector4f(0, 0, 0, 0));
+        }
     }
 
     private boolean checkXHoverState() {
@@ -153,6 +201,24 @@ public class Gizmo extends Component {
         }
 
         yAxisSprite.setColor(yAxisColor);
+        return false;
+    }
+
+    private boolean checkFreeHoverState() {
+        if (freeMoveObject == null) {
+            return false;
+        }
+
+        Vector2f mousePos = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
+        if (mousePos.x <= freeMoveObject.transform.position.x + (freeMoveSize / 2.0f) &&
+                mousePos.x >= freeMoveObject.transform.position.x - (freeMoveSize / 2.0f) &&
+                mousePos.y <= freeMoveObject.transform.position.y + (freeMoveSize / 2.0f) &&
+                mousePos.y >= freeMoveObject.transform.position.y - (freeMoveSize / 2.0f)) {
+            freeMoveSprite.setColor(freeMoveColorHover);
+            return true;
+        }
+
+        freeMoveSprite.setColor(freeMoveColor);
         return false;
     }
 
