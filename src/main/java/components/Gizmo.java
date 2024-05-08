@@ -26,6 +26,7 @@ public class Gizmo extends Component {
 
     private Vector2f xAxisOffset = new Vector2f(24f / 80f, -6f / 80f);
     private Vector2f yAxisOffset = new Vector2f(-7f / 80f, 21f / 80f);
+    private Vector2f freeObjOffset = new Vector2f(0.2f, 0.1f);
 
     private float gizmoWidth = 16f / 80f;
     private float gizmoHeight = 48f / 80f;
@@ -55,7 +56,7 @@ public class Gizmo extends Component {
     public Gizmo(Sprite arrowSprite, PropertiesWindow propertiesWindow, Sprite freeMoveSprite) {
         this.xAxisObject = Prefabs.generateSpriteObject(arrowSprite, gizmoWidth, gizmoHeight);
         this.yAxisObject = Prefabs.generateSpriteObject(arrowSprite, gizmoWidth, gizmoHeight);
-        this.freeMoveObject = Prefabs.generateSpriteObject(freeMoveSprite, freeMoveSize, freeMoveSize);
+        this.freeMoveObject = Prefabs.generateSpriteObject(freeMoveSprite, freeMoveSize, freeMoveSize * 2);
         this.xAxisSprite = this.xAxisObject.getComponent(SpriteRenderer.class);
         this.yAxisSprite = this.yAxisObject.getComponent(SpriteRenderer.class);
         this.freeMoveSprite = this.freeMoveObject.getComponent(SpriteRenderer.class);
@@ -125,20 +126,14 @@ public class Gizmo extends Component {
         boolean yAxisHot = checkYHoverState();
         boolean freeHot = checkFreeHoverState();
 
-        if ((xAxisHot || xAxisActive) && MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+        if ((xAxisHot || xAxisActive) && MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) && !yAxisActive && !freeMoveActive) {
             xAxisActive = true;
-            yAxisActive = false;
-            freeMoveActive = false;
         }
-        else if ((yAxisHot || yAxisActive) && MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+        else if ((yAxisHot || yAxisActive) && MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) && !xAxisActive && !freeMoveActive) {
             yAxisActive = true;
-            xAxisActive = false;
-            freeMoveActive = false;
         }
-        else if ((freeHot || freeMoveActive) && MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+        else if ((freeHot || freeMoveActive) && MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) && !xAxisActive && !yAxisActive) {
             freeMoveActive = true;
-            yAxisActive = false;
-            xAxisActive = false;
         }
         else {
             freeMoveActive = false;
@@ -154,6 +149,7 @@ public class Gizmo extends Component {
 
             if (freeMoveObject != null) {
                 this.freeMoveObject.transform.position.set(this.activeGameObject.transform.position);
+                this.freeMoveObject.transform.position.add(this.freeObjOffset);
             }
         }
     }
@@ -212,8 +208,8 @@ public class Gizmo extends Component {
         Vector2f mousePos = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
         if (mousePos.x <= freeMoveObject.transform.position.x + (freeMoveSize / 2.0f) &&
                 mousePos.x >= freeMoveObject.transform.position.x - (freeMoveSize / 2.0f) &&
-                mousePos.y <= freeMoveObject.transform.position.y + (freeMoveSize / 2.0f) &&
-                mousePos.y >= freeMoveObject.transform.position.y - (freeMoveSize / 2.0f)) {
+                mousePos.y <= freeMoveObject.transform.position.y + (freeMoveSize * 2 / 2.0f) &&
+                mousePos.y >= freeMoveObject.transform.position.y - (freeMoveSize / 4.0f)) {
             freeMoveSprite.setColor(freeMoveColorHover);
             return true;
         }
