@@ -6,7 +6,6 @@ import imgui.type.ImBoolean;
 import scenes.Scene;
 
 public class ImGuiLayer {
-    private boolean showText = false;
 
     public void imgui(Scene currentScene) {
         currentScene.imgui();
