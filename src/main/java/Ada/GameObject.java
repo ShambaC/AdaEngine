@@ -136,8 +136,8 @@ public class GameObject {
         return this.doSerialization;
     }
 
-    public void setNotPickable() {
-        this.isPickable = false;
+    public void setIsPickable(boolean val) {
+        this.isPickable = val;
     }
 
     public boolean isPickable() {

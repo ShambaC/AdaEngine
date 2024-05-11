@@ -28,10 +28,11 @@ public class GameViewWindow {
         }
         ImGui.endMenuBar();
 
+        ImGui.setCursorPos(ImGui.getCursorPosX(), ImGui.getCursorPosY());
         ImVec2 windowSize = getLargestSizeForViewport();
         ImVec2 windowPos = getCenterPositionForViewport(windowSize);
 
-        ImGui.setCursorPos(windowPos.x, windowPos.y);
+        //ImGui.setCursorPos(windowPos.x, windowPos.y);
 
         ImVec2 topLeft = new ImVec2();
         ImGui.getCursorScreenPos(topLeft);
@@ -51,9 +52,6 @@ public class GameViewWindow {
         ImVec2 windowSize = new ImVec2();
         ImGui.getContentRegionAvail(windowSize);
 
-        windowSize.x -= ImGui.getScrollX();
-        windowSize.y -= ImGui.getScrollY();
-
         float aspectWidth = windowSize.x;
         float aspectHeight = aspectWidth / Window.getTargetAspectRatio();
         if (aspectHeight > windowSize.y) {
@@ -68,9 +66,6 @@ public class GameViewWindow {
     private ImVec2 getCenterPositionForViewport(ImVec2 aspectSize) {
         ImVec2 windowSize = new ImVec2();
         ImGui.getContentRegionAvail(windowSize);
-
-        windowSize.x -= ImGui.getScrollX();
-        windowSize.y -= ImGui.getScrollY();
 
         float viewportX = (windowSize.x / 2.0f) - (aspectSize.x / 2.0f);
         float viewportY = (windowSize.y / 2.0f) - (aspectSize.y / 2.0f);

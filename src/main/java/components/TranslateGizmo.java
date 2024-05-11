@@ -18,14 +18,14 @@ public class TranslateGizmo extends Gizmo{
     public void editorUpdate(float dt) {
         if (activeGameObject != null) {
             if (xAxisActive && !yAxisActive) {
-                activeGameObject.transform.position.x -= MouseListener.getWorldDx();
+                activeGameObject.transform.position.x -= MouseListener.getWorldX();
             }
             else if(yAxisActive) {
-                activeGameObject.transform.position.y -= MouseListener.getWorldDy();
+                activeGameObject.transform.position.y -= MouseListener.getWorldY();
             }
             else if(freeMoveActive) {
-                activeGameObject.transform.position.x -= MouseListener.getWorldDx();
-                activeGameObject.transform.position.y -= MouseListener.getWorldDy();
+                activeGameObject.transform.position.x -= MouseListener.getWorldX();
+                activeGameObject.transform.position.y -= MouseListener.getWorldY();
             }
         }
 

@@ -74,14 +74,14 @@ public class Gizmo extends Component {
         this.xAxisObject.transform.zIndex = 100;
         this.yAxisObject.transform.zIndex = 100;
         this.xAxisObject.setNoSerialize();
-        this.xAxisObject.setNotPickable();
+        this.xAxisObject.setIsPickable(false);
         this.yAxisObject.setNoSerialize();
-        this.yAxisObject.setNotPickable();
+        this.yAxisObject.setIsPickable(false);
 
         if (freeMoveObject != null) {
             this.freeMoveObject.transform.zIndex = 100;
             this.freeMoveObject.setNoSerialize();
-            this.freeMoveObject.setNotPickable();
+            this.freeMoveObject.setIsPickable(false);
         }
     }
 
@@ -173,7 +173,7 @@ public class Gizmo extends Component {
     }
 
     private boolean checkXHoverState() {
-        Vector2f mousePos = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
+        Vector2f mousePos = MouseListener.getWorld();
         if (mousePos.x <= xAxisObject.transform.position.x + (gizmoHeight / 2.0f) &&
                 mousePos.x >= xAxisObject.transform.position.x - (gizmoWidth / 2.0f) &&
                 mousePos.y >= xAxisObject.transform.position.y - (gizmoHeight / 2.0f) &&
@@ -187,7 +187,7 @@ public class Gizmo extends Component {
     }
 
     private boolean checkYHoverState() {
-        Vector2f mousePos = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
+        Vector2f mousePos = MouseListener.getWorld();
         if (mousePos.x <= yAxisObject.transform.position.x + (gizmoWidth / 2.0f) &&
                 mousePos.x >= yAxisObject.transform.position.x - (gizmoWidth / 2.0f) &&
                 mousePos.y <= yAxisObject.transform.position.y + (gizmoHeight / 2.0f) &&
@@ -205,7 +205,7 @@ public class Gizmo extends Component {
             return false;
         }
 
-        Vector2f mousePos = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
+        Vector2f mousePos = MouseListener.getWorld();
         if (mousePos.x <= freeMoveObject.transform.position.x + (freeMoveSize / 2.0f) &&
                 mousePos.x >= freeMoveObject.transform.position.x - (freeMoveSize / 2.0f) &&
                 mousePos.y <= freeMoveObject.transform.position.y + (freeMoveSize * 2 / 2.0f) &&

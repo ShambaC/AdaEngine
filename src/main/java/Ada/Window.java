@@ -268,8 +268,6 @@ public class Window implements Observer {
             dt = endTime - beginTime;
             beginTime = endTime;
         }
-
-        EventSystem.notify(null, new Event(EventType.SaveLevel));
     }
 
     public int getWidth() {
