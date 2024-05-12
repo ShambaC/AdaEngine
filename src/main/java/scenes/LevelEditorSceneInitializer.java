@@ -63,6 +63,8 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
 
         ImGui.begin("Asset Folder");
 
+        
+
         ImVec2 windowPos = new ImVec2();
         ImGui.getWindowPos(windowPos);
         ImVec2 windowSize = new ImVec2();
