@@ -41,12 +41,32 @@ public class StateMachine extends Component {
     private transient AnimationState currentState = null;
     private String defaultStateTitle = "";
 
+    public void refreshTextures() {
+        for (AnimationState state : states) {
+            state.refreshTextures();
+        }
+    }
+
     public void addStateTrigger(String from, String to, String onTrigger) {
         this.stateTransfers.put(new StateTrigger(from, onTrigger), to);
     }
 
     public void addState(AnimationState state) {
         this.states.add(state);
+    }
+
+    public void setDefaultState(String animationTitle) {
+        for (AnimationState state : states) {
+            if (state.title.equals(animationTitle)) {
+                defaultStateTitle = animationTitle;
+                if (currentState == null) {
+                    currentState = state;
+                    return;
+                }
+            }
+        }
+
+        System.out.println("Unable to find state " + animationTitle + " in default state");
     }
 
     public void trigger(String trigger) {
