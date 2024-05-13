@@ -2,6 +2,7 @@ package scenes;
 
 import Ada.*;
 import components.*;
+import editor.JImGui;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
@@ -13,15 +14,22 @@ import renderer.Texture;
 import util.AssetPool;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class LevelEditorSceneInitializer extends SceneInitializer {
     private GameObject obj1;
     private Spritesheet sprites;
-    private List<String> spriteSheetsPaths = new ArrayList<>();
+    private Map<String, int[]> spriteSheetCollection = new HashMap<>();
 
     private GameObject levelEditorStuff;
+
+    private String filePath = "";
+    private int sprWidth = 0;
+    private int sprHeight = 0;
+    private int numSpr = 0;
+    private int sprSpace = 0;
 
     public LevelEditorSceneInitializer() {
 
@@ -142,10 +150,12 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                             if (ImGuiFileDialog.isOk()) {
                                 Map<String, String> selection = ImGuiFileDialog.getSelection();
                                 if (selection != null && !selection.isEmpty()) {
-                                    String filePath = selection.values().stream().findFirst().get();
-                                    if (!this.spriteSheetsPaths.contains(filePath)) {
-                                        this.spriteSheetsPaths.add(filePath);
+                                    filePath = selection.values().stream().findFirst().get();
+                                    if (!this.spriteSheetCollection.containsKey(filePath)) {
                                         ImGui.openPopup("SheetModal");
+                                    }
+                                    else {
+                                        System.out.println("File exists");
                                     }
                                 }
                             }
@@ -159,17 +169,35 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                             ImGui.text("New SpriteSheet Wizard");
 
                             Texture tmpSheet = new Texture();
-                            tmpSheet.init(spriteSheetsPaths.get(spriteSheetsPaths.size() - 1));
+                            tmpSheet.init(filePath);
 
                             int tmpSheetId = tmpSheet.getTexID();
                             float tmpSheetWidth = tmpSheet.getWidth();
                             float tmpSheetHeight = tmpSheet.getHeight();
 
-                            ImGui.image(tmpSheetId, tmpSheetWidth, tmpSheetHeight);
+                            ImGui.image(tmpSheetId, tmpSheetWidth * 2, tmpSheetHeight * 2);
 
-                            
+                            sprWidth = JImGui.dragInt("Sprite Width", sprWidth);
+                            sprHeight = JImGui.dragInt("Sprite Height", sprHeight);
+                            numSpr = JImGui.dragInt("NumSprites", numSpr, "Number of sprites in the sheet");
+                            sprSpace = JImGui.dragInt("Spacing", sprSpace, "Spacing between sprites");
 
-                            if(ImGui.button("Cancel")) {
+                            int[] sheetData = {sprWidth, sprHeight, numSpr, sprSpace};
+
+                            if (ImGui.button("OK")) {
+                                this.spriteSheetCollection.put(filePath, sheetData);
+
+                                filePath = "";
+                                sprWidth = 0;
+                                sprHeight = 0;
+                                numSpr = 0;
+                                sprSpace = 0;
+
+                                ImGui.closeCurrentPopup();
+                                MouseListener.get().setInPopup(false);
+                            }
+
+                            if (ImGui.button("Cancel")) {
                                 ImGui.closeCurrentPopup();
                                 MouseListener.get().setInPopup(false);
                             }

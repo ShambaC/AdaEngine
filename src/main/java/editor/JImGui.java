@@ -95,6 +95,10 @@ public class JImGui {
     }
 
     public static int dragInt(String label, int value) {
+        return dragInt(label, value, label);
+    }
+
+    public static int dragInt(String label, int value, String toolTip) {
         ImGui.pushID(label);
 
         ImGui.columns(2);
@@ -102,7 +106,7 @@ public class JImGui {
         ImGui.text(label);
         if(ImGui.isItemHovered()) {
             ImGui.beginTooltip();
-            ImGui.text(label);
+            ImGui.text(toolTip);
             ImGui.endTooltip();
         }
         ImGui.nextColumn();
