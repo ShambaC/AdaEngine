@@ -13,6 +13,7 @@ public class MouseListener {
     private double xPos, yPos, worldX, worldY;
     private boolean mouseButtonPressed[] = new boolean[7];
     private boolean isDragging;
+    private boolean isInPopup = false;
 
     private int mouseButtonsDown = 0;
 
@@ -156,6 +157,14 @@ public class MouseListener {
         float right = gameViewportPos.x + gameViewportSize.x;
         float top = gameViewportPos.y + gameViewportSize.y;
 
-        return  (MouseListener.getX() >= left && MouseListener.getX() <= right && MouseListener.getY() <= top && MouseListener.getY() >= bottom);
+        return  (MouseListener.getX() >= left && MouseListener.getX() <= right && MouseListener.getY() <= top && MouseListener.getY() >= bottom && !isInPopup);
+    }
+
+    public boolean isInPopup() {
+        return isInPopup;
+    }
+
+    public void setInPopup(boolean inPopup) {
+        isInPopup = inPopup;
     }
 }

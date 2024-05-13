@@ -4,12 +4,22 @@ import Ada.*;
 import components.*;
 import imgui.ImGui;
 import imgui.ImVec2;
+import imgui.extension.imguifiledialog.ImGuiFileDialog;
+import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
+import imgui.flag.ImGuiWindowFlags;
+import imgui.type.ImBoolean;
 import org.joml.Vector2f;
+import renderer.Texture;
 import util.AssetPool;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class LevelEditorSceneInitializer extends SceneInitializer {
     private GameObject obj1;
     private Spritesheet sprites;
+    private List<String> spriteSheetsPaths = new ArrayList<>();
 
     private GameObject levelEditorStuff;
 
@@ -49,7 +59,9 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
         AssetPool.addSpriteSheet("assets/images/gizmos.png",
                 new Spritesheet(AssetPool.getTexture("assets/images/gizmos.png"),
                         24, 48, 3, 0));
-        AssetPool.getTexture("assets/images/blendImage2.png");
+        AssetPool.addSpriteSheet("assets/images/spritesheets/plus.png",
+                new Spritesheet(AssetPool.getTexture("assets/images/spritesheets/plus.png"),
+                        32, 32, 1, 0));
 
         for (GameObject g : scene.getGameObjects()) {
             if (g.getComponent(SpriteRenderer.class) != null) {
@@ -107,6 +119,64 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                     float nextButtonX2 = lastButtonX2 + itemSpacing.x + spriteWidth;
                     if (i + 1 < sprites.size() && nextButtonX2 < windowX2) {
                         ImGui.sameLine();
+                    }
+
+                    if (i == sprites.size() - 1) {
+                        Spritesheet plusSignSheet = AssetPool.getSpritesheet("assets/images/spritesheets/plus.png");
+                        Sprite spr = plusSignSheet.getSprite(0);
+                        int plusId = spr.getTexId();
+                        Vector2f[] texCoordsPlus = spr.getTexCoords();
+
+                        if (ImGui.imageButton(plusId, 32, 32,  texCoordsPlus[2].x, texCoordsPlus[0].y, texCoordsPlus[0].x, texCoordsPlus[2].y)) {
+                            MouseListener.get().setInPopup(true);
+                            ImGuiFileDialog.openModal("sheet_browse", "Choose Spritesheet", ".png", ".", 1, 42, ImGuiFileDialogFlags.None);
+                        }
+                        if (ImGui.isItemHovered()) {
+                            ImGui.beginTooltip();
+                            ImGui.text("Add Spritesheets");
+                            ImGui.endTooltip();
+                        }
+
+                        if (ImGuiFileDialog.display("sheet_browse", ImGuiFileDialogFlags.None, 200, 400, 800, 600)) {
+
+                            if (ImGuiFileDialog.isOk()) {
+                                Map<String, String> selection = ImGuiFileDialog.getSelection();
+                                if (selection != null && !selection.isEmpty()) {
+                                    String filePath = selection.values().stream().findFirst().get();
+                                    if (!this.spriteSheetsPaths.contains(filePath)) {
+                                        this.spriteSheetsPaths.add(filePath);
+                                        ImGui.openPopup("SheetModal");
+                                    }
+                                }
+                            }
+                            ImGuiFileDialog.close();
+                            MouseListener.get().setInPopup(false);
+                        }
+
+                        ImBoolean isPopupOpen = new ImBoolean(true);
+                        if (ImGui.beginPopupModal("SheetModal", isPopupOpen, ImGuiWindowFlags.AlwaysAutoResize)) {
+                            MouseListener.get().setInPopup(true);
+                            ImGui.text("New SpriteSheet Wizard");
+
+                            Texture tmpSheet = new Texture();
+                            tmpSheet.init(spriteSheetsPaths.get(spriteSheetsPaths.size() - 1));
+
+                            int tmpSheetId = tmpSheet.getTexID();
+                            float tmpSheetWidth = tmpSheet.getWidth();
+                            float tmpSheetHeight = tmpSheet.getHeight();
+
+                            ImGui.image(tmpSheetId, tmpSheetWidth, tmpSheetHeight);
+
+                            
+
+                            if(ImGui.button("Cancel")) {
+                                ImGui.closeCurrentPopup();
+                                MouseListener.get().setInPopup(false);
+                            }
+
+                            ImGui.endPopup();
+                        }
+                        if (!isPopupOpen.get())   MouseListener.get().setInPopup(false);
                     }
                 }
                 ImGui.endTabItem();
