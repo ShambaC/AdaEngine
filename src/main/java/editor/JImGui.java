@@ -20,6 +20,11 @@ public class JImGui {
         ImGui.columns(2);
         ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
+        if(ImGui.isItemHovered()) {
+            ImGui.beginTooltip();
+            ImGui.text(label);
+            ImGui.endTooltip();
+        }
         ImGui.nextColumn();
 
         ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 0, 0);
@@ -73,6 +78,11 @@ public class JImGui {
         ImGui.columns(2);
         ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
+        if(ImGui.isItemHovered()) {
+            ImGui.beginTooltip();
+            ImGui.text(label);
+            ImGui.endTooltip();
+        }
         ImGui.nextColumn();
 
         float[] valArr = {value};
@@ -90,6 +100,11 @@ public class JImGui {
         ImGui.columns(2);
         ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
+        if(ImGui.isItemHovered()) {
+            ImGui.beginTooltip();
+            ImGui.text(label);
+            ImGui.endTooltip();
+        }
         ImGui.nextColumn();
 
         int[] valArr = {value};
@@ -107,6 +122,11 @@ public class JImGui {
         ImGui.columns(2);
         ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
+        if(ImGui.isItemHovered()) {
+            ImGui.beginTooltip();
+            ImGui.text(label);
+            ImGui.endTooltip();
+        }
         ImGui.nextColumn();
 
         ImGui.checkbox("##dragFloat", value);
@@ -124,6 +144,11 @@ public class JImGui {
         ImGui.columns(2);
         ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
+        if(ImGui.isItemHovered()) {
+            ImGui.beginTooltip();
+            ImGui.text(label);
+            ImGui.endTooltip();
+        }
         ImGui.nextColumn();
 
         float[] imColor = {color.x, color.y, color.z, color.w};
@@ -145,6 +170,11 @@ public class JImGui {
         ImGui.columns(2);
         ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
+        if(ImGui.isItemHovered()) {
+            ImGui.beginTooltip();
+            ImGui.text(label);
+            ImGui.endTooltip();
+        }
         ImGui.nextColumn();
 
         if (ImGui.combo("", index, enumValues, enumValues.length)) {
@@ -163,6 +193,11 @@ public class JImGui {
         ImGui.columns(2);
         ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
         ImGui.text(label);
+        if(ImGui.isItemHovered()) {
+            ImGui.beginTooltip();
+            ImGui.text(label);
+            ImGui.endTooltip();
+        }
         ImGui.nextColumn();
 
         ImString outString = new ImString(text, 256);
