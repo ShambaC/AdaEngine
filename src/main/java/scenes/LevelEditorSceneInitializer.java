@@ -1,6 +1,9 @@
 package scenes;
 
 import Ada.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import components.*;
 import editor.JImGui;
 import imgui.ImGui;
@@ -13,14 +16,18 @@ import org.joml.Vector2f;
 import renderer.Texture;
 import util.AssetPool;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class LevelEditorSceneInitializer extends SceneInitializer {
-    private GameObject obj1;
-    private Spritesheet sprites;
+    private List<Spritesheet> spriteSheets = new ArrayList<>();
     private Map<String, int[]> spriteSheetCollection = new HashMap<>();
 
     private GameObject levelEditorStuff;
@@ -37,7 +44,10 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
 
     @Override
     public void init(Scene scene) {
-        sprites = AssetPool.getSpritesheet("assets/images/spritesheets/decorationsAndBlocks.png");
+        for(String filePath : spriteSheetCollection.keySet()) {
+            Spritesheet sprites = AssetPool.getSpritesheet(filePath);
+            spriteSheets.add(sprites);
+        }
         Spritesheet gizmos = AssetPool.getSpritesheet("assets/images/gizmos.png");
 
         levelEditorStuff = scene.createGameObject("LevelEditor");
@@ -53,6 +63,15 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
 
     @Override
     public void loadResources(Scene scene) {
+        load();
+
+        for(String filePath : spriteSheetCollection.keySet()) {
+            int[] sheetData = spriteSheetCollection.get(filePath);
+            AssetPool.addSpriteSheet(filePath,
+                    new Spritesheet(AssetPool.getTexture(filePath),
+                            sheetData[0], sheetData[1], sheetData[2], sheetData[3]));
+        }
+
         AssetPool.getShader("assets/shaders/default.glsl");
 
         AssetPool.addSpriteSheet("assets/images/spritesheets/decorationsAndBlocks.png",
@@ -86,6 +105,35 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
         }
     }
 
+    private void save() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        try {
+            FileWriter writer = new FileWriter("levelSprites.txt");
+            writer.write(gson.toJson(this.spriteSheetCollection));
+            writer.close();
+        }
+        catch (IOException err) {
+            err.printStackTrace();
+        }
+    }
+
+    private void load() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        String inFile = "";
+        try {
+            inFile = new String(Files.readAllBytes(Paths.get("levelSprites.txt")));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (!inFile.isBlank() && !inFile.equalsIgnoreCase("[]")) {
+            Type type = new TypeToken<Map<String, int[]>>(){}.getType();
+            this.spriteSheetCollection = gson.fromJson(inFile, type);
+        }
+    }
+
     @Override
     public void imgui() {
         ImGui.begin("Engine Settings");
@@ -106,107 +154,120 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                 ImGui.getStyle().getItemSpacing(itemSpacing);
 
                 float windowX2 = windowPos.x + windowSize.x;
-                for (int i = 0; i < sprites.size(); i++) {
-                    Sprite sprite = sprites.getSprite(i);
-                    float spriteWidth = sprite.getWidth() * 2;
-                    float spriteHeight = sprite.getHeight() * 2;
-                    int id = sprite.getTexId();
-                    Vector2f[] texCoords = sprite.getTexCoords();
+                for (int k = 0; k < spriteSheets.size(); k++) {
+                    Spritesheet sprites = spriteSheets.get(k);
+                    for (int i = 0; i < sprites.size(); i++) {
+                        Sprite sprite = sprites.getSprite(i);
+                        float spriteWidth = sprite.getWidth() * 2;
+                        float spriteHeight = sprite.getHeight() * 2;
+                        int id = sprite.getTexId();
+                        Vector2f[] texCoords = sprite.getTexCoords();
 
-                    ImGui.pushID(i);
-                    if (ImGui.imageButton(id, spriteWidth, spriteHeight, texCoords[2].x, texCoords[0].y, texCoords[0].x, texCoords[2].y)) {
-                        GameObject object = Prefabs.generateSpriteObject(sprite, 0.25f, 0.25f);
-                        // Attach this to the mouse cursor
-                        levelEditorStuff.getComponent(MouseControls.class).pickupObject(object);
-                    }
-                    ImGui.popID();
-
-                    ImVec2 lastButtonPos = new ImVec2();
-                    ImGui.getItemRectMax(lastButtonPos);
-                    float lastButtonX2 = lastButtonPos.x;
-                    float nextButtonX2 = lastButtonX2 + itemSpacing.x + spriteWidth;
-                    if (i + 1 < sprites.size() && nextButtonX2 < windowX2) {
-                        ImGui.sameLine();
-                    }
-
-                    if (i == sprites.size() - 1) {
-                        Spritesheet plusSignSheet = AssetPool.getSpritesheet("assets/images/spritesheets/plus.png");
-                        Sprite spr = plusSignSheet.getSprite(0);
-                        int plusId = spr.getTexId();
-                        Vector2f[] texCoordsPlus = spr.getTexCoords();
-
-                        if (ImGui.imageButton(plusId, 32, 32,  texCoordsPlus[2].x, texCoordsPlus[0].y, texCoordsPlus[0].x, texCoordsPlus[2].y)) {
-                            MouseListener.get().setInPopup(true);
-                            ImGuiFileDialog.openModal("sheet_browse", "Choose Spritesheet", ".png", ".", 1, 42, ImGuiFileDialogFlags.None);
+                        ImGui.pushID(i);
+                        if (ImGui.imageButton(id, spriteWidth, spriteHeight, texCoords[2].x, texCoords[0].y, texCoords[0].x, texCoords[2].y)) {
+                            GameObject object = Prefabs.generateSpriteObject(sprite, 0.25f, 0.25f);
+                            // Attach this to the mouse cursor
+                            levelEditorStuff.getComponent(MouseControls.class).pickupObject(object);
                         }
-                        if (ImGui.isItemHovered()) {
-                            ImGui.beginTooltip();
-                            ImGui.text("Add Spritesheets");
-                            ImGui.endTooltip();
+                        ImGui.popID();
+
+                        ImVec2 lastButtonPos = new ImVec2();
+                        ImGui.getItemRectMax(lastButtonPos);
+                        float lastButtonX2 = lastButtonPos.x;
+                        float nextButtonX2 = lastButtonX2 + itemSpacing.x + spriteWidth;
+                        if (i + 1 < sprites.size() && nextButtonX2 < windowX2) {
+                            ImGui.sameLine();
                         }
-
-                        if (ImGuiFileDialog.display("sheet_browse", ImGuiFileDialogFlags.None, 200, 400, 800, 600)) {
-
-                            if (ImGuiFileDialog.isOk()) {
-                                Map<String, String> selection = ImGuiFileDialog.getSelection();
-                                if (selection != null && !selection.isEmpty()) {
-                                    filePath = selection.values().stream().findFirst().get();
-                                    if (!this.spriteSheetCollection.containsKey(filePath)) {
-                                        ImGui.openPopup("SheetModal");
-                                    }
-                                    else {
-                                        System.out.println("File exists");
-                                    }
-                                }
-                            }
-                            ImGuiFileDialog.close();
-                            MouseListener.get().setInPopup(false);
-                        }
-
-                        ImBoolean isPopupOpen = new ImBoolean(true);
-                        if (ImGui.beginPopupModal("SheetModal", isPopupOpen, ImGuiWindowFlags.AlwaysAutoResize)) {
-                            MouseListener.get().setInPopup(true);
-                            ImGui.text("New SpriteSheet Wizard");
-
-                            Texture tmpSheet = new Texture();
-                            tmpSheet.init(filePath);
-
-                            int tmpSheetId = tmpSheet.getTexID();
-                            float tmpSheetWidth = tmpSheet.getWidth();
-                            float tmpSheetHeight = tmpSheet.getHeight();
-
-                            ImGui.image(tmpSheetId, tmpSheetWidth * 2, tmpSheetHeight * 2);
-
-                            sprWidth = JImGui.dragInt("Sprite Width", sprWidth);
-                            sprHeight = JImGui.dragInt("Sprite Height", sprHeight);
-                            numSpr = JImGui.dragInt("NumSprites", numSpr, "Number of sprites in the sheet");
-                            sprSpace = JImGui.dragInt("Spacing", sprSpace, "Spacing between sprites");
-
-                            int[] sheetData = {sprWidth, sprHeight, numSpr, sprSpace};
-
-                            if (ImGui.button("OK")) {
-                                this.spriteSheetCollection.put(filePath, sheetData);
-
-                                filePath = "";
-                                sprWidth = 0;
-                                sprHeight = 0;
-                                numSpr = 0;
-                                sprSpace = 0;
-
-                                ImGui.closeCurrentPopup();
-                                MouseListener.get().setInPopup(false);
-                            }
-
-                            if (ImGui.button("Cancel")) {
-                                ImGui.closeCurrentPopup();
-                                MouseListener.get().setInPopup(false);
-                            }
-
-                            ImGui.endPopup();
-                        }
-                        if (!isPopupOpen.get())   MouseListener.get().setInPopup(false);
                     }
                 }
+
+                Spritesheet plusSignSheet = AssetPool.getSpritesheet("assets/images/spritesheets/plus.png");
+                Sprite spr = plusSignSheet.getSprite(0);
+                int plusId = spr.getTexId();
+                Vector2f[] texCoordsPlus = spr.getTexCoords();
+
+                if (ImGui.imageButton(plusId, 32, 32,  texCoordsPlus[2].x, texCoordsPlus[0].y, texCoordsPlus[0].x, texCoordsPlus[2].y)) {
+                    MouseListener.get().setInPopup(true);
+                    ImGuiFileDialog.openModal("sheet_browse", "Choose Spritesheet", ".png", ".", 1, 42, ImGuiFileDialogFlags.None);
+                }
+                if (ImGui.isItemHovered()) {
+                    ImGui.beginTooltip();
+                    ImGui.text("Add Spritesheets");
+                    ImGui.endTooltip();
+                }
+
+                if (ImGuiFileDialog.display("sheet_browse", ImGuiFileDialogFlags.None, 200, 400, 800, 600)) {
+
+                    if (ImGuiFileDialog.isOk()) {
+                        Map<String, String> selection = ImGuiFileDialog.getSelection();
+                        if (selection != null && !selection.isEmpty()) {
+                            filePath = selection.values().stream().findFirst().get();
+                            if (!this.spriteSheetCollection.containsKey(filePath)) {
+                                ImGui.openPopup("SheetModal");
+                            }
+                            else {
+                                System.out.println("File exists");
+                            }
+                        }
+                    }
+                    ImGuiFileDialog.close();
+                    MouseListener.get().setInPopup(false);
+                }
+
+                ImBoolean isPopupOpen = new ImBoolean(true);
+                if (ImGui.beginPopupModal("SheetModal", isPopupOpen, ImGuiWindowFlags.AlwaysAutoResize)) {
+                    MouseListener.get().setInPopup(true);
+                    ImGui.text("New SpriteSheet Wizard");
+
+                    Texture tmpSheet = new Texture();
+                    tmpSheet.init(filePath);
+
+                    int tmpSheetId = tmpSheet.getTexID();
+                    float tmpSheetWidth = tmpSheet.getWidth();
+                    float tmpSheetHeight = tmpSheet.getHeight();
+
+                    ImGui.image(tmpSheetId, tmpSheetWidth * 2, tmpSheetHeight * 2);
+
+                    sprWidth = JImGui.dragInt("Sprite Width", sprWidth);
+                    sprHeight = JImGui.dragInt("Sprite Height", sprHeight);
+                    numSpr = JImGui.dragInt("NumSprites", numSpr, "Number of sprites in the sheet");
+                    sprSpace = JImGui.dragInt("Spacing", sprSpace, "Spacing between sprites");
+
+                    int[] sheetData = {sprWidth, sprHeight, numSpr, sprSpace};
+
+                    if (ImGui.button("OK")) {
+                        this.spriteSheetCollection.put(filePath, sheetData);
+                         AssetPool.addSpriteSheet(filePath,
+                                 new Spritesheet(AssetPool.getTexture(filePath),
+                                         sheetData[0], sheetData[1], sheetData[2], sheetData[3]));
+                         spriteSheets.add(AssetPool.getSpritesheet(filePath));
+                         save();
+
+                         filePath = "";
+                         sprWidth = 0;
+                         sprHeight = 0;
+                         numSpr = 0;
+                         sprSpace = 0;
+
+                         ImGui.closeCurrentPopup();
+                         MouseListener.get().setInPopup(false);
+                    }
+
+                    if (ImGui.button("Cancel")) {
+                        filePath = "";
+                        sprWidth = 0;
+                        sprHeight = 0;
+                        numSpr = 0;
+                        sprSpace = 0;
+
+                        ImGui.closeCurrentPopup();
+                        MouseListener.get().setInPopup(false);
+                    }
+
+                    ImGui.endPopup();
+                }
+                if (!isPopupOpen.get())   MouseListener.get().setInPopup(false);
+
                 ImGui.endTabItem();
             }
             if (ImGui.beginTabItem("Prefabs")) {
