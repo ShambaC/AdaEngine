@@ -89,9 +89,9 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
         AssetPool.addSpriteSheet("assets/images/gizmos.png",
                 new Spritesheet(AssetPool.getTexture("assets/images/gizmos.png"),
                         24, 48, 3, 0));
-        AssetPool.addSpriteSheet("assets/images/spritesheets/plus.png",
-                new Spritesheet(AssetPool.getTexture("assets/images/spritesheets/plus.png"),
-                        32, 32, 1, 0));
+        AssetPool.addSpriteSheet("assets/images/spritesheets/ButtonIcons.png",
+                new Spritesheet(AssetPool.getTexture("assets/images/spritesheets/ButtonIcons.png"),
+                        32, 32, 2, 0));
 
         AssetPool.addSound("assets/sounds/main-theme-overworld.ogg", true);
         AssetPool.addSound("assets/sounds/flagpole.ogg", false);
@@ -200,7 +200,7 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                     }
                 }
 
-                Spritesheet plusSignSheet = AssetPool.getSpritesheet("assets/images/spritesheets/plus.png");
+                Spritesheet plusSignSheet = AssetPool.getSpritesheet("assets/images/spritesheets/ButtonIcons.png");
                 Sprite spr = plusSignSheet.getSprite(0);
                 int plusId = spr.getTexId();
                 Vector2f[] texCoordsPlus = spr.getTexCoords();
@@ -327,8 +327,8 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                     File tmp = new File(sound.getFilepath());
                     idCounter++;
 
-                    Spritesheet plusSignSheet = AssetPool.getSpritesheet("assets/images/spritesheets/plus.png");
-                    Sprite spr = plusSignSheet.getSprite(0);
+                    Spritesheet plusSignSheet = AssetPool.getSpritesheet("assets/images/spritesheets/ButtonIcons.png");
+                    Sprite spr = plusSignSheet.getSprite(1);
                     int plusId = spr.getTexId();
                     Vector2f[] texCoordsPlus = spr.getTexCoords();
 
