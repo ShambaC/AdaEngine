@@ -13,6 +13,10 @@ import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 import org.joml.Vector2f;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.util.nfd.NFDFilterItem;
+import org.lwjgl.util.nfd.NativeFileDialog;
 import renderer.Texture;
 import util.AssetPool;
 
@@ -20,6 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -201,31 +206,34 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                 Vector2f[] texCoordsPlus = spr.getTexCoords();
 
                 if (ImGui.imageButton(plusId, 32, 32,  texCoordsPlus[2].x, texCoordsPlus[0].y, texCoordsPlus[0].x, texCoordsPlus[2].y)) {
-                    MouseListener.get().setInPopup(true);
-                    ImGuiFileDialog.openModal("sheet_browse", "Choose Spritesheet", ".png", ".", 1, 42, ImGuiFileDialogFlags.None);
-                }
-                if (ImGui.isItemHovered()) {
-                    ImGui.beginTooltip();
-                    ImGui.text("Add Spritesheets");
-                    ImGui.endTooltip();
-                }
 
-                if (ImGuiFileDialog.display("sheet_browse", ImGuiFileDialogFlags.None, 200, 400, 800, 600)) {
+                    try (MemoryStack stack = MemoryStack.stackPush()) {
+                        NFDFilterItem.Buffer filters = NFDFilterItem.malloc(1);
+                        filters.get(0).name(stack.UTF8("Images")).spec(stack.UTF8("png,jpg"));
 
-                    if (ImGuiFileDialog.isOk()) {
-                        Map<String, String> selection = ImGuiFileDialog.getSelection();
-                        if (selection != null && !selection.isEmpty()) {
-                            filePath = selection.values().stream().findFirst().get();
+                        PointerBuffer outPath = stack.mallocPointer(1);
+
+                        int result = NativeFileDialog.NFD_OpenDialog(outPath, filters, (ByteBuffer) null);
+
+                        if (result == NativeFileDialog.NFD_OKAY) {
+                            filePath = outPath.getStringUTF8(0);
                             if (!this.spriteSheetCollection.containsKey(filePath)) {
                                 ImGui.openPopup("SheetModal");
                             }
                             else {
                                 System.out.println("File exists");
                             }
+                            NativeFileDialog.NFD_FreePath(outPath.get(0));
+                        }
+                        else if (result == NativeFileDialog.NFD_ERROR) {
+                            System.err.println("Some error occurred: " + NativeFileDialog.NFD_GetError());
                         }
                     }
-                    ImGuiFileDialog.close();
-                    MouseListener.get().setInPopup(false);
+                }
+                if (ImGui.isItemHovered()) {
+                    ImGui.beginTooltip();
+                    ImGui.text("Add Spritesheets");
+                    ImGui.endTooltip();
                 }
 
                 ImBoolean isPopupOpen = new ImBoolean(true);
