@@ -226,7 +226,7 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                     float tmpSheetWidth = tmpSheet.getWidth();
                     float tmpSheetHeight = tmpSheet.getHeight();
 
-                    ImGui.image(tmpSheetId, tmpSheetWidth * 2, tmpSheetHeight * 2);
+                    ImGui.image(tmpSheetId, tmpSheetWidth * 2, tmpSheetHeight * 2, 0, 1, 1, 0);
 
                     sprWidth = JImGui.dragInt("Sprite Width", sprWidth);
                     sprHeight = JImGui.dragInt("Sprite Height", sprHeight);
