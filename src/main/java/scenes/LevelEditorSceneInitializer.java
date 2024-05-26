@@ -312,15 +312,52 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
 
             if (ImGui.beginTabItem("Sounds")) {
                 Collection<Sound> sounds = AssetPool.getAllSounds();
+
+                ImVec2 windowPos = new ImVec2();
+                ImGui.getWindowPos(windowPos);
+                ImVec2 windowSize = new ImVec2();
+                ImGui.getWindowSize(windowSize);
+                ImVec2 itemSpacing = new ImVec2();
+                ImGui.getStyle().getItemSpacing(itemSpacing);
+
+                float windowX2 = windowPos.x + windowSize.x;
+
+                int idCounter = -1;
                 for (Sound sound : sounds) {
                     File tmp = new File(sound.getFilepath());
-                    if (ImGui.button(tmp.getName())) {
+                    idCounter++;
+
+                    Spritesheet plusSignSheet = AssetPool.getSpritesheet("assets/images/spritesheets/plus.png");
+                    Sprite spr = plusSignSheet.getSprite(0);
+                    int plusId = spr.getTexId();
+                    Vector2f[] texCoordsPlus = spr.getTexCoords();
+
+                    ImGui.beginGroup();
+                    ImGui.pushID(idCounter);
+                    if (ImGui.imageButton(plusId, 32, 32,  texCoordsPlus[2].x, texCoordsPlus[0].y, texCoordsPlus[0].x, texCoordsPlus[2].y)) {
                         if (!sound.isPlaying()) {
                             sound.play();
                         }
                         else {
                             sound.stop();
                         }
+                    }
+                    ImGui.popID();
+                    ImGui.text(tmp.getName().substring(0, 4) + "..");
+                    ImGui.endGroup();
+
+                    if (ImGui.isItemHovered()) {
+                        ImGui.beginTooltip();
+                        ImGui.text(tmp.getName());
+                        ImGui.endTooltip();
+                    }
+
+                    ImVec2 lastButtonPos = new ImVec2();
+                    ImGui.getItemRectMax(lastButtonPos);
+                    float lastButtonX2 = lastButtonPos.x;
+                    float nextButtonX2 = lastButtonX2 + itemSpacing.x + spr.getWidth();
+                    if (idCounter + 1 < sounds.size() && nextButtonX2 < windowX2) {
+                        ImGui.sameLine();
                     }
                 }
 
