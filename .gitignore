@@ -45,8 +45,9 @@ bin/
 ### Imgui files
 imgui.ini
 
-### Font files
+### Assets files
 /assets/fonts
+/assets/sounds
 
 ### Level data
 level.txt
