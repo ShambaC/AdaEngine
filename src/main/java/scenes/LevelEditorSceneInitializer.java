@@ -63,6 +63,7 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
         levelEditorStuff = scene.createGameObject("LevelEditor");
         levelEditorStuff.setNoSerialize();
         levelEditorStuff.addComponent(new MouseControls());
+        levelEditorStuff.addComponent(new KeyControls());
         levelEditorStuff.addComponent(new GridLines());
         levelEditorStuff.addComponent(new EditorCamera(scene.camera()));
         levelEditorStuff.addComponent(new GizmoSystem(gizmos));
@@ -416,6 +417,7 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                     MouseListener.get().setInPopup(true);
                     ImGui.text("New Audio Wizard");
 
+                    // TODO : Create a waveform that can be used to preview the audio along with seek functionality
                     File f = new File(audioFilePath);
                     ImGui.text(f.getName());
 

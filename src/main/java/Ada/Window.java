@@ -252,7 +252,6 @@ public class Window implements Observer {
             glClear(GL_COLOR_BUFFER_BIT);
 
             if(dt >= 0) {
-                DebugDraw.draw();
                 Renderer.bindShader(defaultShader);
                 if (runtimePlay) {
                     currentScene.update(dt);
@@ -261,6 +260,7 @@ public class Window implements Observer {
                     currentScene.editorUpdate(dt);
                 }
                 currentScene.render();
+                DebugDraw.draw();
             }
 
             this.framebuffer.unbind();
@@ -272,7 +272,6 @@ public class Window implements Observer {
             imguiLayer.imgui(currentScene);
 
             gameViewWindow.imgui();
-            propertiesWindow.update(dt, currentScene);
             propertiesWindow.imgui();
             menuBar.imgui();
             sceneHierarchyWindow.imgui();
@@ -288,8 +287,8 @@ public class Window implements Observer {
                 glfwMakeContextCurrent(backupWindowPtr);
             }
 
-            glfwSwapBuffers(glfwWindow);
             MouseListener.endFrame();
+            glfwSwapBuffers(glfwWindow);
 
             endTime = Time.getTime();
             dt = endTime - beginTime;

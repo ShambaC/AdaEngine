@@ -4,8 +4,19 @@ import Ada.GameObject;
 import Ada.KeyListener;
 import Ada.MouseListener;
 import Ada.Window;
+import editor.PropertiesWindow;
+import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector4f;
+import renderer.DebugDraw;
+import renderer.PickingTexture;
+import scenes.Scene;
 import util.Settings;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
@@ -14,6 +25,10 @@ public class MouseControls extends Component {
     GameObject holdingObject = null;
     private float debounceTime = 0.05f;
     private float debounce = debounceTime;
+
+    private boolean boxSelectSet = false;
+    private Vector2f boxSelectStart = new Vector2f();
+    private Vector2f boxSelectEnd = new Vector2f();
 
     public void pickupObject(GameObject go) {
         if (this.holdingObject != null) {
@@ -38,6 +53,13 @@ public class MouseControls extends Component {
     @Override
     public void editorUpdate(float dt) {
         debounce -= dt;
+
+        PropertiesWindow propertiesWindow = Window.get().getPropertiesWindow();
+        PickingTexture pickingTexture = propertiesWindow.getPickingTexture();
+        Scene currentScene = Window.getScene();
+
+        List<GameObject> activeGameObjects = propertiesWindow.getActiveGameObjects();
+
         if (holdingObject != null && MouseListener.get().isInViewPort() && debounce <= 0) {
             holdingObject.transform.position.x = MouseListener.getWorldX();
             holdingObject.transform.position.y = MouseListener.getWorldY();
@@ -53,6 +75,77 @@ public class MouseControls extends Component {
             if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
                 holdingObject.destroy();
                 holdingObject = null;
+            }
+        }
+        else if(MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) && !MouseListener.isDragging() && debounce < 0) {
+            int x = (int) MouseListener.getScreenX();
+            int y = (int) MouseListener.getScreenY();
+
+            if (MouseListener.get().isInViewPort()) {
+                GameObject tempObj = currentScene.getGameObject(pickingTexture.readPixel(x, y));
+                // Conditions to not set the gizmo as the active gameobject
+                if (!activeGameObjects.isEmpty() && activeGameObjects.get(0) != null) {
+                    for (GameObject gObj: activeGameObjects) {
+                        gObj.setIsPicked(false);
+                    }
+                }
+
+                if (tempObj == null) {
+                    propertiesWindow.clearSelected();
+                }
+                else if (tempObj.isPickable()) {
+                    propertiesWindow.setActiveGameObject(tempObj);
+                    tempObj.setIsPicked(true);
+                }
+
+            }
+
+            this.debounce = 0.2f;
+        }
+        else if (MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+            if (!boxSelectSet) {
+                Window.get().getPropertiesWindow().clearSelected();
+                boxSelectStart = MouseListener.getScreen();
+                boxSelectSet = true;
+            }
+            boxSelectEnd = MouseListener.getScreen();
+            Vector2f boxSelectStartWorld = MouseListener.screenToWorld(boxSelectStart);
+            Vector2f boxSelectEndWorld = MouseListener.screenToWorld(boxSelectEnd);
+            Vector2f halfSize = (new Vector2f(boxSelectEndWorld).sub(boxSelectStartWorld)).mul(0.5f);
+            DebugDraw.addBox2D((new Vector2f(boxSelectStartWorld)).add(halfSize), new Vector2f(halfSize).mul(2.0f), 0.0f);
+        }
+        else if (boxSelectSet) {
+            boxSelectSet = false;
+            int screenStartX = (int) boxSelectStart.x;
+            int screenStartY = (int) boxSelectStart.y;
+            int screenEndX = (int) boxSelectEnd.x;
+            int screenEndY = (int) boxSelectEnd.y;
+            boxSelectStart.zero();
+            boxSelectEnd.zero();
+
+            if (screenEndX < screenStartX) {
+                int tmp = screenStartX;
+                screenStartX = screenEndX;
+                screenEndX = tmp;
+            }
+
+            if (screenEndY < screenStartY) {
+                int tmp = screenStartY;
+                screenStartY = screenEndY;
+                screenEndY = tmp;
+            }
+
+            float[] gameObjectIds = pickingTexture.readPixels(new Vector2i(screenStartX, screenStartY), new Vector2i(screenEndX, screenEndY));
+            Set<Integer> uniqueGameObjectIds = new HashSet<>();
+            for (float objId : gameObjectIds) {
+                uniqueGameObjectIds.add((int) objId);
+            }
+
+            for (Integer gameObjectId : uniqueGameObjectIds) {
+                GameObject pickedObject = Window.getScene().getGameObject(gameObjectId);
+                if (pickedObject != null && pickedObject.isPickable()) {
+                    Window.get().getPropertiesWindow().addActiveGameObject(pickedObject);
+                }
             }
         }
     }
