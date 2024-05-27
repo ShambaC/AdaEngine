@@ -94,6 +94,28 @@ public class JImGui {
         return valArr[0];
     }
 
+    public static float sliderFloat(String label, float value, float minVal, float maxVal) {
+        ImGui.pushID(label);
+
+        ImGui.columns(2);
+        ImGui.setColumnWidth(0, ImGui.getWindowWidth() / 2.5f);
+        ImGui.text(label);
+        if(ImGui.isItemHovered()) {
+            ImGui.beginTooltip();
+            ImGui.text(label);
+            ImGui.endTooltip();
+        }
+        ImGui.nextColumn();
+
+        float[] valArr = {value};
+        ImGui.sliderFloat("##sliderFloat", valArr, minVal, maxVal, "%.3f");
+
+        ImGui.columns(1);
+        ImGui.popID();
+
+        return valArr[0];
+    }
+
     public static int dragInt(String label, int value) {
         return dragInt(label, value, label);
     }
