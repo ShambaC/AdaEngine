@@ -28,10 +28,13 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class LevelEditorSceneInitializer extends SceneInitializer {
     private List<Spritesheet> spriteSheets = new ArrayList<>();
     private Map<String, int[]> spriteSheetCollection = new HashMap<>();
+
+    private Map<String, Boolean> soundsCollection = new HashMap<String, Boolean>();
 
     private GameObject levelEditorStuff;
 
@@ -40,6 +43,10 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
     private int sprHeight = 0;
     private int numSpr = 0;
     private int sprSpace = 0;
+
+    private String audioFilePath = "";
+    private boolean isLoopVal = false;
+    private float volumeVal = 0.3f;
 
     public LevelEditorSceneInitializer() {
 
@@ -93,21 +100,12 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                 new Spritesheet(AssetPool.getTexture("assets/images/spritesheets/ButtonIcons.png"),
                         32, 32, 2, 0));
 
-        AssetPool.addSound("assets/sounds/main-theme-overworld.ogg", true);
-        AssetPool.addSound("assets/sounds/flagpole.ogg", false);
-        AssetPool.addSound("assets/sounds/break_block.ogg", false);
-        AssetPool.addSound("assets/sounds/bump.ogg", false);
-        AssetPool.addSound("assets/sounds/coin.ogg", false);
-        AssetPool.addSound("assets/sounds/gameover.ogg", false);
-        AssetPool.addSound("assets/sounds/jump-small.ogg", false);
-        AssetPool.addSound("assets/sounds/mario_die.ogg", false);
-        AssetPool.addSound("assets/sounds/pipe.ogg", false);
-        AssetPool.addSound("assets/sounds/powerup.ogg", false);
-        AssetPool.addSound("assets/sounds/powerup_appears.ogg", false);
-        AssetPool.addSound("assets/sounds/stage_clear.ogg", false);
-        AssetPool.addSound("assets/sounds/stomp.ogg", false);
-        AssetPool.addSound("assets/sounds/kick.ogg", false);
-        AssetPool.addSound("assets/sounds/invincible.ogg", false);
+        for (String filepath : soundsCollection.keySet()) {
+            boolean isLoop = soundsCollection.get(filepath);
+            AssetPool.addSound(filepath, isLoop);
+        }
+
+
 
         for (GameObject g : scene.getGameObjects()) {
             if (g.getComponent(SpriteRenderer.class) != null) {
@@ -131,6 +129,10 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
             FileWriter writer = new FileWriter("levelSprites.txt");
             writer.write(gson.toJson(this.spriteSheetCollection));
             writer.close();
+
+            writer = new FileWriter("levelSounds.txt");
+            writer.write(gson.toJson(this.soundsCollection));
+            writer.close();
         }
         catch (IOException err) {
             err.printStackTrace();
@@ -150,6 +152,18 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
         if (!inFile.isBlank() && !inFile.equalsIgnoreCase("[]")) {
             Type type = new TypeToken<Map<String, int[]>>(){}.getType();
             this.spriteSheetCollection = gson.fromJson(inFile, type);
+        }
+
+        inFile = "";
+        try {
+            inFile = new String(Files.readAllBytes(Paths.get("levelSounds.txt")));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (!inFile.isBlank() && !inFile.equalsIgnoreCase("[]")) {
+            Type type = new TypeToken<Map<String, Boolean>>(){}.getType();
+            this.soundsCollection = gson.fromJson(inFile, type);
         }
     }
 
@@ -311,7 +325,7 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
             }
 
             if (ImGui.beginTabItem("Sounds")) {
-                Collection<Sound> sounds = AssetPool.getAllSounds();
+                List<Sound> sounds = new ArrayList<>(AssetPool.getAllSounds());
 
                 ImVec2 windowPos = new ImVec2();
                 ImGui.getWindowPos(windowPos);
@@ -322,19 +336,18 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
 
                 float windowX2 = windowPos.x + windowSize.x;
 
-                int idCounter = -1;
-                for (Sound sound : sounds) {
+                Spritesheet ButtonSignSheet = AssetPool.getSpritesheet("assets/images/spritesheets/ButtonIcons.png");
+                for (int i = 0; i < sounds.size(); i++) {
+                    Sound sound = sounds.get(i);
                     File tmp = new File(sound.getFilepath());
-                    idCounter++;
 
-                    Spritesheet plusSignSheet = AssetPool.getSpritesheet("assets/images/spritesheets/ButtonIcons.png");
-                    Sprite spr = plusSignSheet.getSprite(1);
-                    int plusId = spr.getTexId();
+                    Sprite spr = ButtonSignSheet.getSprite(1);
+                    int noteId = spr.getTexId();
                     Vector2f[] texCoordsPlus = spr.getTexCoords();
 
                     ImGui.beginGroup();
-                    ImGui.pushID(idCounter);
-                    if (ImGui.imageButton(plusId, 32, 32,  texCoordsPlus[2].x, texCoordsPlus[0].y, texCoordsPlus[0].x, texCoordsPlus[2].y)) {
+                    ImGui.pushID(i);
+                    if (ImGui.imageButton(noteId, 32, 32,  texCoordsPlus[2].x, texCoordsPlus[0].y, texCoordsPlus[0].x, texCoordsPlus[2].y)) {
                         if (!sound.isPlaying()) {
                             sound.play();
                         }
@@ -356,10 +369,89 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                     ImGui.getItemRectMax(lastButtonPos);
                     float lastButtonX2 = lastButtonPos.x;
                     float nextButtonX2 = lastButtonX2 + itemSpacing.x + spr.getWidth();
-                    if (idCounter + 1 < sounds.size() && nextButtonX2 < windowX2) {
+                    if (i + 1 < sounds.size() && nextButtonX2 < windowX2) {
                         ImGui.sameLine();
                     }
                 }
+
+                // Add button
+                Sprite spr = ButtonSignSheet.getSprite(0);
+                int plusId = spr.getTexId();
+                Vector2f[] texCoordsPlus = spr.getTexCoords();
+
+                if (ImGui.imageButton(plusId, 32, 32,  texCoordsPlus[2].x, texCoordsPlus[0].y, texCoordsPlus[0].x, texCoordsPlus[2].y)) {
+                    try (MemoryStack stack = MemoryStack.stackPush()) {
+                        NFDFilterItem.Buffer filters = NFDFilterItem.malloc(1);
+                        filters.get(0).name(stack.UTF8("Audio")).spec(stack.UTF8("ogg"));
+
+                        PointerBuffer outPath = stack.mallocPointer(1);
+
+                        int result = NativeFileDialog.NFD_OpenDialog(outPath, filters, (ByteBuffer) null);
+
+                        if (result == NativeFileDialog.NFD_OKAY) {
+                            audioFilePath = outPath.getStringUTF8(0);
+                            if (soundsCollection.containsKey(audioFilePath)) {
+                                System.err.println("File already exists");
+                            }
+                            else {
+                                ImGui.openPopup("SoundModal");
+                            }
+
+                            NativeFileDialog.NFD_FreePath(outPath.get(0));
+                        }
+                        else if (result == NativeFileDialog.NFD_ERROR) {
+                            System.err.println("Some error occurred: " + NativeFileDialog.NFD_GetError());
+                        }
+                    }
+                }
+
+                if (ImGui.isItemHovered()) {
+                    ImGui.beginTooltip();
+                    ImGui.text("Add Sound");
+                    ImGui.endTooltip();
+                }
+
+                ImBoolean isPopupOpen = new ImBoolean(true);
+                if (ImGui.beginPopupModal("SoundModal", isPopupOpen, ImGuiWindowFlags.AlwaysAutoResize)) {
+                    MouseListener.get().setInPopup(true);
+                    ImGui.text("New Audio Wizard");
+
+                    File f = new File(audioFilePath);
+                    ImGui.text(f.getName());
+
+                    isLoopVal = JImGui.checkBox("isLoop", isLoopVal);
+                    volumeVal = JImGui.sliderFloat("Volume", volumeVal, 0.0f, 1.0f);
+
+                    if (ImGui.button("Ok")) {
+                        soundsCollection.put(audioFilePath, isLoopVal);
+                        AssetPool.addSound(audioFilePath, isLoopVal);
+
+                        Sound tmpSound = AssetPool.getSound(audioFilePath);
+                        tmpSound.setVolume(volumeVal);
+
+                        save();
+
+                        audioFilePath = "";
+                        isLoopVal = false;
+                        volumeVal = 0.3f;
+
+                        ImGui.closeCurrentPopup();
+                        MouseListener.get().setInPopup(false);
+                    }
+
+                    if (ImGui.button("Cancel")) {
+                        audioFilePath = "";
+                        isLoopVal = false;
+                        volumeVal = 0.3f;
+
+                        ImGui.closeCurrentPopup();
+                        MouseListener.get().setInPopup(false);
+                    }
+
+                    ImGui.endPopup();
+                }
+
+                if (!isPopupOpen.get())   MouseListener.get().setInPopup(false);
 
                 ImGui.endTabItem();
             }

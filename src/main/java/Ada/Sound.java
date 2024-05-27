@@ -101,4 +101,12 @@ public class Sound {
         }
         return isPlaying;
     }
+
+    public void setLoop(boolean isLoop) {
+        alSourcei(sourceId, AL_LOOPING, isLoop ? 1 : 0);
+    }
+
+    public void setVolume(float value) {
+        alSourcef(sourceId, AL_GAIN, value);
+    }
 }
