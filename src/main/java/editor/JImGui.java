@@ -134,7 +134,7 @@ public class JImGui {
         ImGui.nextColumn();
 
         int[] valArr = {value};
-        ImGui.dragInt("##dragFloat", valArr, 0.1f);
+        ImGui.dragInt("##dragint", valArr, 0.1f);
 
         ImGui.columns(1);
         ImGui.popID();
@@ -155,7 +155,12 @@ public class JImGui {
         }
         ImGui.nextColumn();
 
-        ImGui.checkbox("##dragFloat", value);
+        boolean val = value;
+        if (ImGui.checkbox("##checkbox", val)) {
+            ImGui.columns(1);
+            ImGui.popID();
+            return !val;
+        }
 
         ImGui.columns(1);
         ImGui.popID();
