@@ -18,6 +18,8 @@ public class MouseListener {
     private boolean isDragging;
     private boolean isInPopup = false;
 
+    private boolean isUsingGizmo = false;
+
     private int mouseButtonsDown = 0;
 
     private Vector2f gameViewportPos = new Vector2f();
@@ -210,5 +212,13 @@ public class MouseListener {
 
     public void setInPopup(boolean inPopup) {
         isInPopup = inPopup;
+    }
+
+    public boolean isUsingGizmo() {
+        return isUsingGizmo;
+    }
+
+    public void setUsingGizmo(boolean usingGizmo) {
+        isUsingGizmo = usingGizmo;
     }
 }

@@ -102,20 +102,6 @@ public class Gizmo extends Component {
         this.activeGameObject = this.propertiesWindow.getActiveGameObject();
         if (this.activeGameObject != null) {
             this.setActive();
-
-            // TODO create a keyEditorBindings
-            if (KeyListener.isKeyPressed(GLFW_KEY_LEFT_CONTROL) && KeyListener.keyBeginPress(GLFW_KEY_D)) {
-                GameObject newObj = this.activeGameObject.copy();
-                Window.getScene().addGameObjectToScene(newObj);
-                newObj.transform.position.add(0.1f, 0.1f);
-                this.propertiesWindow.setActiveGameObject(newObj);
-                return;
-            }
-            else if (KeyListener.keyBeginPress(GLFW_KEY_DELETE)) {
-                activeGameObject.destroy();
-                this.setInactive();
-                this.propertiesWindow.setActiveGameObject(null);
-            }
         }
         else {
             this.setInactive();
@@ -140,6 +126,8 @@ public class Gizmo extends Component {
             xAxisActive = false;
             yAxisActive = false;
         }
+
+        MouseListener.get().setUsingGizmo(freeHot || xAxisHot || yAxisHot);
 
         if (this.activeGameObject != null) {
             this.xAxisObject.transform.position.set(this.activeGameObject.transform.position);

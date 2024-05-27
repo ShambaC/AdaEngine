@@ -102,7 +102,7 @@ public class MouseControls extends Component {
 
             this.debounce = 0.2f;
         }
-        else if (MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+        else if (MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) && MouseListener.get().isInViewPort() && !MouseListener.get().isUsingGizmo()) {
             if (!boxSelectSet) {
                 Window.get().getPropertiesWindow().clearSelected();
                 boxSelectStart = MouseListener.getScreen();
