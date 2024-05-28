@@ -2,7 +2,6 @@ package Ada;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import java.util.Arrays;
@@ -13,7 +12,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 public class MouseListener {
     private static MouseListener instance;
     private double scrollX, scrollY;
-    private double xPos, yPos, worldX, worldY;
+    private double xPos, yPos, lastWorldX, lastWorldY, worldX, worldY;
     private boolean mouseButtonPressed[] = new boolean[7];
     private boolean isDragging;
     private boolean isInPopup = false;
@@ -30,6 +29,8 @@ public class MouseListener {
         this.scrollY = 0.0;
         this.xPos = 0.0;
         this.yPos = 0.0;
+        this.lastWorldX = 0.0;
+        this.lastWorldY = 0.0;
     }
 
     public static MouseListener get() {
@@ -45,10 +46,12 @@ public class MouseListener {
             get().isDragging = true;
         }
 
+        get().lastWorldX = get().worldX;
+        get().lastWorldY = get().worldY;
         get().xPos = xpos;
         get().yPos = ypos;
-
-
+        get().worldX = getWorldX();
+        get().worldY = getWorldY();
     }
 
     public static void mouseButtonCallback(long window, int button, int action, int mods) {
@@ -80,10 +83,12 @@ public class MouseListener {
     }
 
     public static void clear() {
-        get().scrollX = 0.0;
-        get().scrollY = 0.0;
-        get().xPos = 0.0;
-        get().yPos = 0.0;
+        get().scrollX = 0.0f;
+        get().scrollY = 0.0f;
+        get().xPos = 0.0f;
+        get().yPos = 0.0f;
+        get().lastWorldY = 0.0f;
+        get().lastWorldX = 0.0f;
         get().isDragging = false;
         Arrays.fill(get().mouseButtonPressed, false);
     }
@@ -94,6 +99,14 @@ public class MouseListener {
 
     public static float getY() {
         return (float) get().yPos;
+    }
+
+    public static float getWorldDx() {
+        return (float) (get().lastWorldX - get().worldX);
+    }
+
+    public static float getWorldDy() {
+        return (float) (get().lastWorldY - get().worldY);
     }
 
     public static float getScrollX() {
