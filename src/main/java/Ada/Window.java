@@ -34,6 +34,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window implements Observer {
 
     private int width, height;
+    private int vPortWidth, vPortHeight;
     private String title;
     private long glfwWindow;
     private ImGuiLayer imguiLayer;
@@ -207,8 +208,10 @@ public class Window implements Observer {
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         // Framebuffer
-        this.framebuffer = new Framebuffer(1920, 1080);
-        this.pickingTexture = new PickingTexture(1920, 1080);
+        vPortWidth = 1920;
+        vPortHeight = 1080;
+        this.framebuffer = new Framebuffer(vPortWidth, vPortHeight);
+        this.pickingTexture = new PickingTexture(vPortWidth, vPortHeight);
         this.propertiesWindow = new PropertiesWindow(pickingTexture);
         this.menuBar = new MenuBar();
         this.sceneHierarchyWindow = new SceneHierarchyWindow();
@@ -311,6 +314,14 @@ public class Window implements Observer {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public int getVPortWidth() {
+        return this.vPortWidth;
+    }
+
+    public int getVPortHeight() {
+        return this.vPortHeight;
     }
 
     public static Framebuffer getFramebuffer() {
