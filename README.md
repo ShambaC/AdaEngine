@@ -10,6 +10,7 @@ A Work in progress 2D game engine.
 - Export the Engine properly
 
 ## TODO:
-- [ ] Add a free move plane to the translate gizmo
-- [ ] Change add component menu to more unity like that the current popup one
+- [x] Add a free move plane to the translate gizmo
+- [x] Change add component menu to more unity like that the current popup one
 - [ ] Add option to add prefabs in a different way, like a button in the prefab tab and some wizard.
+- [ ] Fix snap to grid for areas outside the default view area
