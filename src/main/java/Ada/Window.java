@@ -291,6 +291,7 @@ public class Window implements Observer {
                 glfwMakeContextCurrent(backupWindowPtr);
             }
 
+            KeyListener.endFrame();
             MouseListener.endFrame();
             glfwSwapBuffers(glfwWindow);
 

@@ -1,5 +1,7 @@
 package Ada;
 
+import java.util.Arrays;
+
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
@@ -9,6 +11,10 @@ public class KeyListener {
     private boolean keyBeginPress[] = new boolean[350];
 
     private KeyListener() {}
+
+    public static void endFrame() {
+        Arrays.fill(get().keyBeginPress, false);
+    }
 
     public static KeyListener get() {
         if(instance == null) {
@@ -35,11 +41,6 @@ public class KeyListener {
     }
 
     public static boolean keyBeginPress(int keyCode) {
-        boolean res = get().keyBeginPress[keyCode];
-        if (res) {
-            get().keyBeginPress[keyCode] = false;
-        }
-
-        return res;
+        return get().keyBeginPress[keyCode];
     }
 }

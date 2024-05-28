@@ -131,6 +131,13 @@ public class MouseListener {
             return false;
     }
 
+    public static boolean mouseButtonUp(int button) {
+        if(button < get().mouseButtonPressed.length)
+            return  !get().mouseButtonPressed[button];
+        else
+            return true;
+    }
+
 
     public static float getWorldX() {
         return getWorld().x;
