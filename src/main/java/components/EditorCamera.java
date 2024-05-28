@@ -4,6 +4,7 @@ import Ada.Camera;
 import Ada.KeyListener;
 import Ada.MouseListener;
 import org.joml.Vector2f;
+import util.Settings;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -59,8 +60,8 @@ public class EditorCamera extends Component {
             levelEditorCamera.setZoom(this.levelEditorCamera.getZoom() + ((1.0f - levelEditorCamera.getZoom()) * lerpTime));
             this.lerpTime += 0.1f * dt;
 
-            if (Math.abs(levelEditorCamera.getPosition().x) <= 5.0f &&
-                    Math.abs(levelEditorCamera.getPosition().y) <= 5.0f) {
+            if (Math.abs(levelEditorCamera.getPosition().x) <= Settings.GRID_WIDTH &&
+                    Math.abs(levelEditorCamera.getPosition().y) <= Settings.GRID_HEIGHT) {
                 this.lerpTime = 0.0f;
                 levelEditorCamera.getPosition().set(0f, 0f);
                 this.levelEditorCamera.setZoom(1.0f);
