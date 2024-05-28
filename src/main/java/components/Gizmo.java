@@ -127,7 +127,7 @@ public class Gizmo extends Component {
             yAxisActive = false;
         }
 
-        MouseListener.get().setUsingGizmo(freeHot || xAxisHot || yAxisHot);
+        MouseListener.get().setUsingGizmo(freeHot || xAxisHot || yAxisHot || xAxisActive || yAxisActive);
 
         if (this.activeGameObject != null) {
             this.xAxisObject.transform.position.set(this.activeGameObject.transform.position);

@@ -261,6 +261,7 @@ public class Window implements Observer {
                 }
                 currentScene.render();
                 DebugDraw.draw();
+                MouseListener.editorUpdate();
             }
 
             this.framebuffer.unbind();

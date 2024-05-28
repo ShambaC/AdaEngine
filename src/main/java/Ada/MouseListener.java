@@ -41,13 +41,16 @@ public class MouseListener {
         return instance;
     }
 
+    public static void editorUpdate() {
+        get().lastWorldX = get().worldX;
+        get().lastWorldY = get().worldY;
+    }
+
     public static void mousePosCallback(long window, double xpos, double ypos) {
         if (get().mouseButtonsDown > 0) {
             get().isDragging = true;
         }
 
-        get().lastWorldX = get().worldX;
-        get().lastWorldY = get().worldY;
         get().xPos = xpos;
         get().yPos = ypos;
         get().worldX = getWorldX();
