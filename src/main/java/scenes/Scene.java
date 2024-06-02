@@ -84,6 +84,10 @@ public class Scene {
         return result.orElse(null);
     }
 
+    public Physics2D getPhysics() {
+        return this.physics2D;
+    }
+
     public void editorUpdate(float dt) {
         this.camera.adjustProjection();
 
