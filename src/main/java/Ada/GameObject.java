@@ -12,6 +12,9 @@ import util.AssetPool;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Gameobjects are every object in a game scene.
+ */
 public class GameObject {
     private static int ID_COUNTER = 0;
     private int uid = -1;
