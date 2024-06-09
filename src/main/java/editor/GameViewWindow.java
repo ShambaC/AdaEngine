@@ -3,6 +3,7 @@ package editor;
 import Ada.MouseListener;
 import Ada.Window;
 import imgui.ImGui;
+import imgui.ImGuiIO;
 import imgui.ImVec2;
 import imgui.flag.ImGuiWindowFlags;
 import observers.EventSystem;
@@ -15,6 +16,8 @@ public class GameViewWindow {
     private boolean isPlaying = false;
 
     public void imgui() {
+        ImGuiIO io = ImGui.getIO();
+
         ImGui.begin("Game Viewport", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar);
 
         ImGui.beginMenuBar();
@@ -26,6 +29,14 @@ public class GameViewWindow {
             isPlaying = false;
             EventSystem.notify(null, new Event(EventType.GameEngineStopPlay));
         }
+
+        float ogCPosX = ImGui.getCursorPosX();
+        String FPSText = String.format("FPS: %.2f", io.getFramerate());
+        ImGui.setCursorPosX(ogCPosX + getLargestSizeForViewport().x - ImGui.calcTextSize(FPSText).x);
+        ImGui.text(FPSText);
+
+        ImGui.setCursorPosX(ogCPosX);
+
         ImGui.endMenuBar();
 
         ImGui.setCursorPos(ImGui.getCursorPosX(), ImGui.getCursorPosY());
