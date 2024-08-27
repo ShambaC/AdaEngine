@@ -7,10 +7,7 @@ import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 import org.joml.Vector2f;
-import physics2d.components.Box2DCollider;
-import physics2d.components.CircleCollider;
-import physics2d.components.RaycastInfo;
-import physics2d.components.Rigidbody2D;
+import physics2d.components.*;
 
 public class Physics2D {
     private Vec2 gravity = new Vec2(0, -9.8f);
@@ -20,6 +17,10 @@ public class Physics2D {
     private float physicsTimeStep = 1.0f / 120.0f;
     private int velocityIterations = 8;
     private int positionIterations = 3;
+
+    public  Physics2D() {
+        world.setContactListener(new AdaContactListener());
+    }
 
     public void add(GameObject go) {
         Rigidbody2D rb = go.getComponent(Rigidbody2D.class);
@@ -161,6 +162,28 @@ public class Physics2D {
         body.createFixture(fixtureDef);
     }
 
+    public void resetPillboxCollider(Rigidbody2D rb, PillboxCollider pb) {
+        Body body = rb.getRawBody();
+        if (body == null) return;
+
+        int size = fixtureListSize(body);
+        for (int i = 0; i < size; i++) {
+            body.destroyFixture(body.getFixtureList());
+        }
+
+        addPillCollider(rb, pb);
+        body.resetMassData();
+    }
+
+    public void addPillCollider(Rigidbody2D rb, PillboxCollider pb) {
+        Body body = rb.getRawBody();
+        assert body != null : "Raw body must not be null";
+
+        addBox2DCollider(rb, pb.getBox());
+        addCircleCollider(rb, pb.getTopCircle());
+        addCircleCollider(rb, pb.getBottomCircle());
+    }
+
     public RaycastInfo raycast(GameObject requestingObject, Vector2f point1, Vector2f point2) {
         RaycastInfo callback = new RaycastInfo(requestingObject);
         world.raycast(callback, new Vec2(point1.x, point1.y), new Vec2(point2.x, point2.y));
@@ -175,5 +198,9 @@ public class Physics2D {
             fixture = fixture.m_next;
         }
         return size;
+    }
+
+    public boolean isLocked() {
+        return world.isLocked();
     }
 }

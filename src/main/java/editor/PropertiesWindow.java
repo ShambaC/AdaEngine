@@ -7,6 +7,7 @@ import imgui.ImGui;
 import org.joml.Vector4f;
 import physics2d.components.Box2DCollider;
 import physics2d.components.CircleCollider;
+import physics2d.components.PillboxCollider;
 import physics2d.components.Rigidbody2D;
 import renderer.PickingTexture;
 import scenes.Scene;
@@ -64,6 +65,10 @@ public class PropertiesWindow {
                         if (activeGameObject.getComponent(CircleCollider.class) == null && activeGameObject.getComponent(Box2DCollider.class) == null) {
                             activeGameObject.addComponent(new CircleCollider());
                         }
+                    }
+
+                    if (ImGui.menuItem("Pillbox Collider")) {
+                        activeGameObject.addComponent(new PillboxCollider());
                     }
 
                 }
